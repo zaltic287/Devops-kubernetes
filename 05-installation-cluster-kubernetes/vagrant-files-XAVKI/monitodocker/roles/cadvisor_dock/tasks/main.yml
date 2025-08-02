@@ -1,0 +1,39 @@
+---
+# tasks file for cadvisor_dock
+
+- name: Remove docker-py
+  become: true
+  pip:
+    executable: pip3
+    name: docker-py
+    state: absent
+
+- name: Install docker for python
+  become: true
+  pip:
+    executable: pip3
+    name: docker
+    state: present
+    extra_args: --system
+
+- name: Create a network
+  docker_network:
+    name: "{{cadvisor_dock_network }}"
+
+- name: create cadvisor directory
+  file:
+    dest: "{{ item }}"
+    state: directory
+    mode: 0755
+    recurse: true
+  with_items:
+  - "{{ cadvisor_dock_dir_configuration }}"
+
+- name: create docker-compose file
+  template:
+    src: docker-compose-cadvisor.yml.j2
+    dest: "{{ cadvisor_dock_dir_configuration }}/docker-compose-cadvisor.yml"
+    mode: 0755
+
+- name: run docker-compose
+  shell: "docker-compose -f {{ cadvisor_dock_dir_configuration }}/docker-compose-cadvisor.yml up -d"

@@ -1,0 +1,112 @@
+---
+# tasks file for grafana_dock
+
+- name: Remove docker-py
+  become: true
+  pip:
+    executable: pip3
+    name: docker-py
+    state: absent
+
+- name: Install docker for python
+  become: true
+  pip:
+    executable: pip3
+    name: docker
+    state: present
+    extra_args: --system
+
+- name: Create a network
+  docker_network:
+    name: "{{ grafana_dock_network }}"
+
+- name: create grafana directory
+  file:
+    dest: "{{ item }}"
+    state: directory
+    mode: 0755
+    recurse: true
+  with_items:
+  - "{{ grafana_dock_dir_configuration }}/conf"
+  - "{{ grafana_dock_dir_datas }}"
+
+- name: create docker-compose file
+  template:
+    src: docker-compose-grafana.yml.j2
+    dest: "{{ grafana_dock_dir_configuration }}/docker-compose-grafana.yml"
+    mode: 0755
+  notify: restart_compose_grafana
+
+- name: run docker-compose
+  shell: "docker-compose -f {{ grafana_dock_dir_configuration }}/docker-compose-grafana.yml up -d"
+
+- name: create grafana.ini file
+  template:
+    src: grafana.ini.j2
+    dest: "{{ grafana_dock_dir_configuration }}/conf/grafana.ini"
+    mode: 0755
+  notify: restart_grafana
+
+- name: force handlers if needed
+  meta: flush_handlers
+
+- name: wait for service up
+  uri:
+    url: "http://127.0.0.1:3000"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 120
+  delay: 1
+
+- name: change password for admin
+  shell : "docker exec -ti grafana grafana-cli admin reset-admin-password {{ grafana_dock_admin_password }}"
+
+
+- name: add prometheus datasource
+  grafana_datasource:
+    name: "prometheus-local"
+    grafana_url: "http://127.0.0.1:3000"
+    grafana_user: "admin"
+    grafana_password: "{{ grafana_dock_admin_password }}"
+    org_id: "1"
+    ds_type: "prometheus"
+    ds_url: "http://prometheus:9090"
+
+
+- name: Download node exporter dashboard file json
+  get_url:
+    url: https://raw.githubusercontent.com/rfrail3/grafana-dashboards/master/prometheus/node-exporter-full.json
+    dest: /var/lib/grafana/node-exporter.json
+    mode: '0755'
+
+- name: create dashboard file for node exporter yaml
+  template:
+    src: dashboard-node-exporter.yml.j2
+    dest: /etc/grafana/conf/provisioning/dashboards/dashboard-node-exporter.yml
+    mode: 0755
+  notify: restart_grafana
+
+- name: Download node exporter dashboard file json
+  get_url:
+    url: https://grafana.com/api/dashboards/10566/revisions/1/download
+    dest: /var/lib/grafana/docker.json
+    mode: '0755'
+
+- name: replace datasource in docker dashboard
+  replace:
+    path: /var/lib/grafana/docker.json
+    regexp: "\\$\\{DS_PROMETHEUS_INFRASTRUCTURE\\}"
+    replace: "prometheus-local"
+  tags:
+  - replace
+
+- name: create dashboard file for docker yaml
+  template:
+    src: dashboard-docker.yml.j2
+    dest: /etc/grafana/conf/provisioning/dashboards/dashboard-docker.yml
+    mode: 0755
+  notify: restart_grafana
+
+
+

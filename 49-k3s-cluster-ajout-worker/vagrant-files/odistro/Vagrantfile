@@ -1,0 +1,96 @@
+Vagrant.configure(2) do |config|
+  common = <<-SHELL
+  sudo apt install -y vim tree net-tools telnet git python3
+  sudo echo "autocmd filetype yaml setlocal ai ts=2 sw=2 et" > /home/vagrant/.vimrc
+  sudo echo "alias python=/usr/bin/python3" >> /home/vagrant/.bashrc
+  curl -fsSL https://get.docker.com -o get-docker.sh
+  sudo sh get-docker.sh
+  sudo usermod -aG docker vagrant
+  sudo service docker start
+  sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+  sudo systemctl restart sshd
+  SHELL
+	config.vm.box = "centos/7"
+	config.vm.box_url = "centos/7"
+
+  config.vm.define "oldap" do |control|
+    control.vm.hostname = "ldap.example.com"
+    control.vm.box = "ubuntu/bionic64"
+    control.vm.box_url = "ubuntu/bionic64"
+    control.vm.network "private_network", ip: "192.168.20.124"
+    control.vm.provider "virtualbox" do |v|
+      v.customize [ "modifyvm", :id, "--cpus", "1" ]
+      v.customize [ "modifyvm", :id, "--memory", "512" ]
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--name", "oldap"]
+    end
+    control.vm.provision :shell, :inline => common
+    control.vm.provision "shell", path: "install_ldap.sh"
+  end
+
+	config.vm.define "oes1" do |control|
+		control.vm.hostname = "oes1"
+	  control.vm.box = "ubuntu/bionic64"
+	  control.vm.box_url = "ubuntu/bionic64"
+		control.vm.network "private_network", ip: "192.168.20.120"
+		control.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "4" ]
+			v.customize [ "modifyvm", :id, "--memory", "8500" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "oes1"]
+    control.vm.provision "shell", path: "install_elk.sh"
+		end
+		control.vm.provision :shell, :inline => common
+	end
+
+	config.vm.define "oes2" do |control|
+		control.vm.hostname = "oes2"
+	  control.vm.box = "ubuntu/bionic64"
+	  control.vm.box_url = "ubuntu/bionic64"
+		control.vm.network "private_network", ip: "192.168.20.121"
+		control.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "2" ]
+			v.customize [ "modifyvm", :id, "--memory", "2048" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "oes2"]
+		end
+		control.vm.provision :shell, :inline => common
+    control.vm.provision "shell", path: "install_elk.sh"
+	end
+
+	config.vm.define "oes3" do |control|
+		control.vm.hostname = "oes3"
+	  control.vm.box = "ubuntu/bionic64"
+	  control.vm.box_url = "ubuntu/bionic64"
+		control.vm.network "private_network", ip: "192.168.20.122"
+		control.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "2" ]
+			v.customize [ "modifyvm", :id, "--memory", "2048" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "oes3"]
+		end
+		control.vm.provision :shell, :inline => common
+    control.vm.provision "shell", path: "install_elk.sh"
+	end
+
+	config.vm.define "osrv11" do |srv11|
+		srv11.vm.hostname = "osrv11"
+	  srv11.vm.box = "ubuntu/bionic64"
+	  srv11.vm.box_url = "ubuntu/bionic64"
+		srv11.vm.network "private_network", ip: "192.168.20.123"
+		srv11.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "1" ]
+			v.customize [ "modifyvm", :id, "--memory", "512" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "osrv11"]
+		end
+		srv11.vm.provision :shell, :inline => common
+	end
+
+end
+

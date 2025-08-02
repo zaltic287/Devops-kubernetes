@@ -1,0 +1,3 @@
+On fait des Snapshots.
+
+Cette fonctionnalité est disponible que sur les clusters crées dans rancher directement (Cluster RKE)

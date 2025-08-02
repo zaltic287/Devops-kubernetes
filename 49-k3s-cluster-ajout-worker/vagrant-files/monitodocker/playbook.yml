@@ -1,0 +1,16 @@
+- name: install node exporter
+  hosts: all
+  become: yes
+  roles:
+  - node_exporter
+  - cadvisor_dock
+
+- name: install monitor stack prom/graf
+  hosts: prometheus
+  become: yes
+  roles:
+  - prometheus_dock
+  - grafana_dock
+
+  tags:
+  - test

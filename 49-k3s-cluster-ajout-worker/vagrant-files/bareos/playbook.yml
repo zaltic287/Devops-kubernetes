@@ -1,0 +1,12 @@
+- name: install server
+  hosts: serverbareos
+  become: yes
+  roles:
+  - bareos_server
+
+- name: install client
+  hosts: clientbareos
+  become: yes
+  roles:
+  - bareos_client
+

@@ -1,0 +1,9 @@
+all:
+  children:
+    serverbareos:
+      hosts:
+        192.168.7.10:
+    clientbareos:
+      hosts:
+        192.168.7.11:
+

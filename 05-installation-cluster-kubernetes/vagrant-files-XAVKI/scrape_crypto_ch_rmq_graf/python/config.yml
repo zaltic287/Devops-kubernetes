@@ -1,0 +1,14 @@
+log_level: INFO #DEBUG...
+rabbitmq:
+  host: rmq1
+  port: 5672
+  vhost: /
+  user: Saliou
+  password: password
+  queue: cryptos.target 
+postgresql:
+  host: pg1
+  port: 5432
+  database: cryptoslist
+  user: cryptos
+  password: password

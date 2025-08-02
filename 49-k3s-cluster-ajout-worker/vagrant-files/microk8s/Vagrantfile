@@ -1,0 +1,69 @@
+Vagrant.configure(2) do |config|
+
+	# before you must install these plugins to speed up vagrant provisionning
+  # vagrant plugin install vagrant-faster
+  # vagrant plugin install vagrant-cachier
+  etcHosts = ""
+  config.cache.auto_detect = true
+
+
+	# some settings for common server
+  common = <<-SHELL
+  sudo apt update -qq 2>&1 >/dev/null
+  sudo apt install -y -qq git vim tree net-tools telnet git python3-pip sshpass nfs-common curl 2>&1 >/dev/null
+  sudo echo "autocmd filetype yaml setlocal ai ts=2 sw=2 et" > /home/vagrant/.vimrc
+  sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+  sudo systemctl restart sshd
+  SHELL
+
+  installKubectl = <<-SHELL
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+    apt-get update -qq 2>&1 >/dev/null
+    apt-get install -qq -y kubectl 2>&1 >/dev/null
+    mkdir -p /home/vagrant/.kube
+    chown -R vagrant /home/vagrant/.kube
+  SHELL
+
+  installMicrok8s = <<-SHELL
+
+  SHELL
+
+	# set vagrant image
+	config.vm.box = "debian/bullseye64"
+	config.vm.box_url = "debian/bullseye64"
+
+	# set servers list and their parameters
+	NODES = [
+  	{ :hostname => "microk8s1", :ip => "192.168.15.160", :cpus => 4, :mem => 4096, :type => "worker" },
+  	#{ :hostname => "microk8s2", :ip => "192.168.15.161", :cpus => 2, :mem => 2048, :type => "worker" },
+  	#{ :hostname => "microk8s3", :ip => "192.168.15.162", :cpus => 2, :mem => 2048, :type => "worker" },
+  	{ :hostname => "microk8smaster", :ip => "192.168.15.170", :cpus => 2, :mem => 2048, :type => "controller" },
+	]
+
+	# define /etc/hosts for all servers
+  NODES.each do |node|
+    etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + "' >> /etc/hosts" + "\n"
+  end #end NODES
+
+  NODES.each do |node|
+    config.vm.define node[:hostname] do |cfg|
+			cfg.vm.hostname = node[:hostname]
+      cfg.vm.network "private_network", ip: node[:ip]
+      cfg.vm.provider "virtualbox" do |v|
+				v.customize [ "modifyvm", :id, "--cpus", node[:cpus] ]
+        v.customize [ "modifyvm", :id, "--memory", node[:mem] ]
+      end #end provider
+			
+			#for all
+      cfg.vm.provision :shell, :inline => etcHosts
+			
+			# for all servers in cluster
+			cfg.vm.provision :shell, :inline => common
+      cfg.vm.provision :shell, :inline => installKubectl
+    end # end config
+  end # end nodes
+
+end 
+
+

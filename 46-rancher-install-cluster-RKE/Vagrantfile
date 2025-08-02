@@ -1,0 +1,62 @@
+Vagrant.configure(2) do |config|
+  common = <<-SHELL
+  if ! grep -q rancher /etc/hosts; then  sudo echo "192.168.11.150     rancher" >> /etc/hosts ;fi
+  if ! grep -q rmaster01 /etc/hosts; then  sudo echo "192.168.11.151     rmaster01" >> /etc/hosts ;fi
+  if ! grep -q rnode01 /etc/hosts; then  sudo echo "192.168.11.152     rnode01" >> /etc/hosts ;fi
+  
+  sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+  sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+  sudo dnf update -y
+  sudo dnf -y install vim tree net-tools telnet git curl
+  sudo echo "autocmd filetype yaml setlocal ai ts=2 sw=2 et" > /home/vagrant/.vimrc
+  sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+  sudo systemctl restart sshd
+  SHELL
+
+	config.vm.box = "centos/8"
+	config.vm.box_url = "centos/8"
+
+	config.vm.define "rancher" do |rancher|
+		rancher.vm.hostname = "rancher"
+		rancher.vm.network "private_network", ip: "192.168.11.150"
+		rancher.vm.disk :disk, size: "40GB", name: "rancher_disk", primary: true
+		rancher.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "4" ]
+			v.customize [ "modifyvm", :id, "--memory", "4096" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      		v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "rancher"]
+			 
+		end
+	#config.disksize.size = "30GB"
+	config.vm.provision :shell, :inline => common
+		rancher.vm.provision "shell", path: "cluster.sh"
+	end
+	config.vm.define "rmaster01" do |rmaster01|
+		rmaster01.vm.hostname = "rmaster01"
+		rmaster01.vm.network "private_network", ip: "192.168.11.151"
+		rmaster01.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "4" ]
+			v.customize [ "modifyvm", :id, "--memory", "4096" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      		v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "rmaster01"]
+		end
+	config.vm.provision :shell, :inline => common
+		rmaster01.vm.provision "shell", path: "cluster.sh"
+	end
+	config.vm.define "rnode01" do |rnode01|
+		rnode01.vm.hostname = "rnode01"
+		rnode01.vm.network "private_network", ip: "192.168.11.152"
+		rnode01.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "2" ]
+			v.customize [ "modifyvm", :id, "--memory", "4096" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      		v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "rnode01"]
+		end
+	config.vm.provision :shell, :inline => common
+		rnode01.vm.provision "shell", path: "cluster.sh"
+	end
+end
+

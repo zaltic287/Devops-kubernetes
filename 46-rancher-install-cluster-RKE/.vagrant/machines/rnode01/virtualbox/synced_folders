@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"E:/Kubernetes/46-rancher-install-cluster-RKE","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}

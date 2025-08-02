@@ -1,0 +1,731 @@
+[  157.130720] INFO: rcu_sched detected stalls on CPUs/tasks:
+[  157.131579] watchdog: BUG: soft lockup - CPU#1 stuck for 139s! [modprobe:282]
+[  157.138980] 	1-...!: (3 ticks this GP) idle=0ee/140000000000001/0 softirq=972/976 fqs=2 
+[  157.147442] Modules linked in: raid6_pq(+) libcrc32c raid1 raid0 multipath linear mptspi scsi_transport_spi mptscsih aesni_intel aes_x86_64 crypto_simd cryptd glue_helper psmouse mptbase e1000
+[  157.157831] 	(detected by 0, t=37050 jiffies, g=-139, c=-140, q=174)
+[  157.177621] CPU: 1 PID: 282 Comm: modprobe Not tainted 4.15.0-212-generic #223-Ubuntu
+[  157.185786] Sending NMI from CPU 0 to CPUs 1:
+[  157.195226] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  157.203430] NMI backtrace for cpu 1
+[  157.203459] CPU: 1 PID: 282 Comm: modprobe Not tainted 4.15.0-212-generic #223-Ubuntu
+[  157.203460] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  157.203460] RIP: 0010:io_serial_out+0x1a/0x20
+[  157.203461] RSP: 0018:ffff9c8cbfd03c50 EFLAGS: 00010002
+[  157.203462] RAX: 0000000000000020 RBX: ffffffffaa316e60 RCX: 0000000000000000
+[  157.203462] RDX: 00000000000003f8 RSI: 0000000000000000 RDI: ffffffffaa316e60
+[  157.203463] RBP: ffff9c8cbfd03c50 R08: 0000000000000000 R09: 0000000000000007
+[  157.203463] R10: 0000000000000000 R11: ffffffffaa16a80d R12: 0000000000000020
+[  157.203464] R13: ffffffffaa16a85d R14: ffffffffaa16a802 R15: ffffffffaa316e60
+[  157.203464] FS:  00007f7b7dd0c540(0000) GS:ffff9c8cbfd00000(0000) knlGS:0000000000000000
+[  157.203464] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  157.203465] CR2: 00007f7b7dd04d00 CR3: 0000000036a9e000 CR4: 00000000000006e0
+[  157.203465] Call Trace:
+[  157.203465]  <IRQ>
+[  157.203465]  serial8250_console_putchar+0x2d/0x40
+[  157.203465]  ? wait_for_xmitr+0xb0/0xb0
+[  157.203466]  uart_console_write+0x4c/0x60
+[  157.203466]  serial8250_console_write+0x10a/0x2a0
+[  157.203466]  ? msg_print_text+0x80/0x100
+[  157.203467]  univ8250_console_write+0x21/0x30
+[  157.203467]  console_unlock+0x3cf/0x560
+[  157.203468]  vprintk_emit+0x134/0x2c0
+[  157.203468]  vprintk_default+0x29/0x50
+[  157.203468]  vprintk_func+0x47/0xc0
+[  157.203468]  ? printk+0x52/0x6e
+[  157.203469]  printk+0x52/0x6e
+[  157.203469]  dump_stack_print_info+0xa2/0xb0
+[  157.203469]  show_regs_print_info+0xe/0x10
+[  157.203469]  show_regs+0x34/0x190
+[  157.203470]  watchdog_timer_fn+0x1db/0x230
+[  157.203470]  ? watchdog+0x30/0x30
+[  157.203470]  __hrtimer_run_queues+0xdf/0x230
+[  157.203471]  hrtimer_interrupt+0x97/0x180
+[  157.203471]  smp_apic_timer_interrupt+0x6f/0x140
+[  157.203471]  apic_timer_interrupt+0x90/0xa0
+[  157.203472]  </IRQ>
+[  157.203472] RIP: 0010:raid6_sse21_gen_syndrome+0xce/0x130 [raid6_pq]
+[  157.203472] RSP: 0018:ffffbfd8c07b7b50 EFLAGS: 00010283 ORIG_RAX: ffffffffffffff11
+[  157.203473] RAX: ffffbfd8c07b7be8 RBX: 0000000000001000 RCX: ffffffffc027f600
+[  157.203473] RDX: 0000000000000640 RSI: ffffbfd8c07b7c18 RDI: 000000000000000d
+[  157.203474] RBP: ffffbfd8c07b7b80 R08: ffffbfd8c07b7b98 R09: 0000000000000640
+[  157.203474] R10: ffffbfd8c07b7c10 R11: ffffbfd8c07b7c08 R12: ffff9c8c76a36000
+[  157.203474] R13: ffff9c8c76a37000 R14: ffffbfd8c07b7ba0 R15: 0000000000000080
+[  157.203475]  init_module+0x118/0x1000 [raid6_pq]
+[  157.203475]  ? 0xffffffffc01b7000
+[  157.203475]  do_one_initcall+0x52/0x1b0
+[  157.203476]  ? _cond_resched+0x19/0x40
+[  157.203476]  ? kmem_cache_alloc_trace+0x167/0x1d0
+[  157.203477]  ? do_init_module+0x27/0x1f2
+[  157.203477]  do_init_module+0x4f/0x1f2
+[  157.203477]  load_module+0x1aa7/0x1fd0
+[  157.203477]  ? ima_post_read_file+0x96/0xa0
+[  157.203478]  SYSC_finit_module+0xfc/0x120
+[  157.203478]  ? SYSC_finit_module+0xfc/0x120
+[  157.203478]  SyS_finit_module+0xe/0x10
+[  157.203478]  do_syscall_64+0x73/0x130
+[  157.203479]  entry_SYSCALL_64_after_hwframe+0x59/0xbe
+[  157.203479] RIP: 0033:0x7f7b7d80f539
+[  157.203479] RSP: 002b:00007ffc5bcfac48 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[  157.203480] RAX: ffffffffffffffda RBX: 000055b6929bd880 RCX: 00007f7b7d80f539
+[  157.203480] RDX: 0000000000000000 RSI: 000055b691e58cee RDI: 0000000000000004
+[  157.203513] RBP: 000055b691e58cee R08: 0000000000000000 R09: 000055b6929bce00
+[  157.203514] R10: 0000000000000004 R11: 0000000000000246 R12: 0000000000000000
+[  157.203515] R13: 000055b6929bd830 R14: 0000000000060000 R15: 000055b6929bce00
+[  157.203515] Code: 55 48 89 e5 d3 e6 01 f2 ec 0f b6 c0 5d c3 0f 1f 00 0f 1f 44 00 00 0f b6 8f a1 00 00 00 89 d0 8b 57 08 55 48 89 e5 d3 e6 01 f2 ee <5d> c3 0f 1f 40 00 0f 1f 44 00 00 0f b6 87 a2 00 00 00 55 48 c7 
+[  157.203523] INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 2.387 msecs
+[  157.203645] rcu_sched kthread starved for 37045 jiffies! g18446744073709551477 c18446744073709551476 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x402 ->cpu=0
+[  157.214876] RIP: 0010:raid6_sse21_gen_syndrome+0xce/0x130 [raid6_pq]
+[  157.220265] rcu_sched       I    0     8      2 0x80000000
+[  157.230093] RSP: 0018:ffffbfd8c07b7b50 EFLAGS: 00010283 ORIG_RAX: ffffffffffffff11
+[  157.240606] Call Trace:
+[  157.246753] RAX: ffffbfd8c07b7be8 RBX: 0000000000001000 RCX: ffffffffc027f600
+[  157.253887]  __schedule+0x24e/0x890
+[  157.263331] RDX: 0000000000000640 RSI: ffffbfd8c07b7c18 RDI: 000000000000000d
+[  157.273007]  schedule+0x2c/0x80
+[  157.283529] RBP: ffffbfd8c07b7b80 R08: ffffbfd8c07b7b98 R09: 0000000000000640
+[  157.292712]  schedule_timeout+0x15d/0x370
+[  157.302056] R10: ffffbfd8c07b7c10 R11: ffffbfd8c07b7c08 R12: ffff9c8c76a36000
+[  157.311582]  ? __next_timer_interrupt+0xe0/0xe0
+[  157.319387] R13: ffff9c8c76a37000 R14: ffffbfd8c07b7ba0 R15: 0000000000000080
+[  157.327436]  rcu_gp_kthread+0x53a/0x980
+[  157.327500]  kthread+0x121/0x140
+[  157.331300] FS:  00007f7b7dd0c540(0000) GS:ffff9c8cbfd00000(0000) knlGS:0000000000000000
+[  157.334360]  ? rcu_note_context_switch+0x150/0x150
+[  157.340545] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  157.345468]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  157.350869] CR2: 00007f7b7dd04d00 CR3: 0000000036a9e000 CR4: 00000000000006e0
+[  157.356637]  ret_from_fork+0x35/0x40
+[  157.362303] Call Trace:
+[  157.802109]  init_module+0x118/0x1000 [raid6_pq]
+[  157.807741]  ? 0xffffffffc01b7000
+[  157.811832]  do_one_initcall+0x52/0x1b0
+[  157.816487]  ? _cond_resched+0x19/0x40
+[  157.821013]  ? kmem_cache_alloc_trace+0x167/0x1d0
+[  157.826829]  ? do_init_module+0x27/0x1f2
+[  157.831912]  do_init_module+0x4f/0x1f2
+[  157.836404]  load_module+0x1aa7/0x1fd0
+[  157.841045]  ? ima_post_read_file+0x96/0xa0
+[  157.846180]  SYSC_finit_module+0xfc/0x120
+[  157.852037]  ? SYSC_finit_module+0xfc/0x120
+[  157.856359]  SyS_finit_module+0xe/0x10
+[  157.860300]  do_syscall_64+0x73/0x130
+[  157.864869]  entry_SYSCALL_64_after_hwframe+0x59/0xbe
+[  157.870631] RIP: 0033:0x7f7b7d80f539
+[  157.875222] RSP: 002b:00007ffc5bcfac48 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[  157.883650] RAX: ffffffffffffffda RBX: 000055b6929bd880 RCX: 00007f7b7d80f539
+[  157.891858] RDX: 0000000000000000 RSI: 000055b691e58cee RDI: 0000000000000004
+[  157.899809] RBP: 000055b691e58cee R08: 0000000000000000 R09: 000055b6929bce00
+[  157.907972] R10: 0000000000000004 R11: 0000000000000246 R12: 0000000000000000
+[  157.915878] R13: 000055b6929bd830 R14: 0000000000060000 R15: 000055b6929bce00
+[  157.924008] Code: 48 8b 08 0f 18 04 11 66 0f 64 ec 66 0f fc e4 66 0f db e8 66 0f ef e5 66 0f ef ed 66 0f ef d6 66 0f ef e6 48 8b 08 66 0f 6f 34 11 <48> 83 e8 08 49 39 c0 75 cc 66 0f 64 ec 66 0f fc e4 66 0f db e8 
+[  157.945681] raid6: sse2x1   gen() 24726654 MB/s
+[  158.005017] raid6: sse2x1   xor()  7165 MB/s
+[  158.057146] raid6: sse2x2   gen() 15925 MB/s
+[  158.130994] raid6: sse2x2   xor() 13621 MB/s
+[  158.193610] raid6: sse2x4   gen() 16331 MB/s
+[  158.256221] raid6: sse2x4   xor()  9253 MB/s
+[  158.262014] raid6: using algorithm sse2x1 gen() 24726654 MB/s
+[  158.269538] raid6: .... xor() 7165 MB/s, rmw enabled
+[  158.275439] raid6: using ssse3x2 recovery algorithm
+[  158.309828] xor: measuring software checksum speed
+[  158.412619]    prefetch64-sse: 36691.000 MB/sec
+[  158.516354]    generic_sse: 34973.000 MB/sec
+[  158.521785] xor: using function: prefetch64-sse (36691.000 MB/sec)
+[  158.533177] async_tx: api initialized (async)
+done.
+Begin: Running /scripts/init-premount ... done.
+Begin: Mounting root file system ... Begin: Running /scripts/local-top ... done.
+Begin: Running /scripts/local-premount ... [  158.697888] Btrfs loaded, crc32c=crc32c-intel
+Scanning for Btrfs filesystems
+done.
+Warning: fsck not present, so skipping root file system
+[  158.815175] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+done.
+Begin: Running /scripts/local-bottom ... done.
+Begin: Running /scripts/init-bottom ... done.
+[  159.149451] ip_tables: (C) 2000-2006 Netfilter Core Team
+[  159.193677] systemd[1]: systemd 237 running in system mode. (+PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN2 +IDN -PCRE2 default-hierarchy=hybrid)
+[  159.217010] systemd[1]: Detected virtualization oracle.
+[  159.223658] systemd[1]: Detected architecture x86-64.
+
+Welcome to [1mUbuntu 18.04.6 LTS[0m!
+
+[  159.278555] systemd[1]: Set hostname to <kubnode1>.
+[  159.795780] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[[0;32m  OK  [0m] Started Forward Password Requests to Wall Directory Watch.
+[  159.825515] systemd[1]: Created slice User and Session Slice.
+[[0;32m  OK  [0m] Created slice User and Session Slice.
+[  159.837003] systemd[1]: Reached target Mounting snaps.
+[[0;32m  OK  [0m] Reached target Mounting snaps.
+[  159.848527] systemd[1]: Reached target Mounted snaps.
+[[0;32m  OK  [0m] Reached target Mounted snaps.
+[  159.859366] systemd[1]: Reached target User and Group Name Lookups.
+[[0;32m  OK  [0m] Reached target User and Group Name Lookups.
+[  159.871784] systemd[1]: Reached target System Time Synchronized.
+[[0;32m  OK  [0m] Reached target System Time Synchronized.
+[[0;32m  OK  [0m] Reached target Swap.
+[[0;32m  OK  [0m] Created slice System Slice.
+[[0;32m  OK  [0m] Listening on Device-mapper event daemon FIFOs.
+[[0;32m  OK  [0m] Listening on Journal Audit Socket.
+[[0;32m  OK  [0m] Listening on Journal Socket.
+         Mounting Huge Pages File System...
+         Starting Create list of required st…ce nodes for the current kernel...
+         Starting Load Kernel Modules...
+[[0;32m  OK  [0m] Listening on LVM2 poll daemon socket.
+[[0;32m  OK  [0m] Reached target Slices.
+         Starting Set the console keyboard layout...
+         Mounting Kernel Debug File System...
+[[0;32m  OK  [0m] Listening on udev Control Socket.
+[[0;32m  OK  [0m] Listening on Syslog Socket.
+[[0;32m  OK  [0m] Listening on Network Service Netlink Socket.
+[  159.979806] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+         Starting Uncomplicated firewall...
+         Mounting POSIX Message Queue File System...
+[[0;32m  OK  [0m] [  160.009156] Bridge firewalling registered
+Listening on LVM2 metadata daemon socket.
+         Starting Monitoring of LVM2 mirrors…ng dmeventd or progress polling...
+[[0;32m  OK  [0m] Listening on udev Kernel Socket.
+         Starting udev Coldplug all Devices...
+[[0;32m  OK  [0m] Listening on Journal Socket (/dev/log).
+         Starting Journal Service...
+[[0;32m  OK  [0m] Listening on /dev/initctl Compatibility Named Pipe.
+[[0;32m  OK  [0m] Set up automount Arbitrary Executab…rmats File System Automount Point.
+[  160.086997] Loading iSCSI transport class v2.0-870.
+[[0;32m  OK  [0m] Created slice system-serial\x2dgetty.slice.
+[[0;32m  OK  [0m] Listening on fsck to fsckd communication Socket.
+         Starting File System Check on Root Device...
+[[0;32m  OK  [0m] Mounted Huge Pages File System.
+[[0;32m  OK  [0m] Started Create list of required sta…vice nodes for the current kernel.
+[[0;32m  OK  [0m] Mounted Kernel Debug File System.
+[[0;32m  OK  [0m] Started Uncomplicated firewall.
+[[0;32m  OK  [0m] Mounted POSIX Message Queue File System.
+         Starting Create Static Device Nodes in /dev...
+[[0;32m  OK  [0m] Started File System Check Daemon to report status.
+[[0;32m  OK  [0m] Started Journal Service.
+[  160.196457] iscsi: registered transport (tcp)
+[[0;32m  OK  [0m] Started udev Coldplug all Devices.
+[[0;32m  OK  [0m] Started Create Static Device Nodes in /dev.
+[[0;32m  OK  [0m] Started LVM2 metadata daemon.
+[[0;32m  OK  [0m] Started Set the console keyboard layout.
+[[0;32m  OK  [0m] Started File System Check on Root Device.
+         Starting Remount Root and Kernel File Systems...
+[  160.386397] iscsi: registered transport (iser)
+[[0;32m  OK  [0m] Started Load Kernel Modules.
+         Mounting Kernel Configuration File System...
+         Starting Apply Kernel Variables...
+         Mounting FUSE Control File System...
+[[0;32m  OK  [0m] Mounted Kernel Configuration File System.
+[[0;32m  OK  [0m] Started Monitoring of LVM2 mirrors,…sing dmeventd or progress polling.
+[[0;32m  OK  [0m] Mounted FUSE Control File System.
+[[0;32m  OK  [0m] Started Remount Root and Kernel File Systems.
+[[0;32m  OK  [0m] Started Apply Kernel Variables.
+         Starting Flush Journal to Persistent Storage...
+         Starting Load/Save Random Seed...
+         Starting udev Kernel Device Manager...
+[[0;32m  OK  [0m] Reached target Local File Systems (Pre).
+[[0;32m  OK  [0m] Reached target Local File Systems.
+         Starting AppArmor initialization...
+         Starting Tell Plymouth To Write Out Runtime Data...
+         Starting ebtables ruleset management...
+         Starting Set console font and keymap...
+[[0;32m  OK  [0m] Started Load/Save Random Seed.
+[[0;32m  OK  [0m] Started Tell Plymouth To Write Out Runtime Data.
+[[0;32m  OK  [0m] Started udev Kernel Device Manager.
+[[0;32m  OK  [0m] Started Dispatch Password Requests to Console Directory Watch.
+[[0;32m  OK  [0m] Reached target Local Encrypted Volumes.
+[[0;32m  OK  [0m] Started Set console font and keymap.
+[[0;32m  OK  [0m] Started Flush Journal to Persistent Storage.
+         Starting Create Volatile Files and Directories...
+[[0;32m  OK  [0m] Started Create Volatile Files and Directories.
+         Starting Update UTMP about System Boot/Shutdown...
+[[0;32m  OK  [0m] Started ebtables ruleset management.
+[[0;32m  OK  [0m] Started Update UTMP about System Boot/Shutdown.
+[[0;32m  OK  [0m] Found device /dev/ttyS0.
+[[0;32m  OK  [0m] Listening on Load/Save RF Kill Switch Status /dev/rfkill Watch.
+[[0;32m  OK  [0m] Started AppArmor initialization.
+         Starting Load AppArmor profiles managed internally by snapd...
+         Starting Initial cloud-init job (pre-networking)...
+         Mounting Arbitrary Executable File Formats File System...
+[[0;32m  OK  [0m] Mounted Arbitrary Executable File Formats File System.
+[[0;32m  OK  [0m] Started Load AppArmor profiles managed internally by snapd.
+[  164.074059] cloud-init[567]: Cloud-init v. 23.1.2-0ubuntu0~18.04.1 running 'init-local' at Sun, 17 Nov 2024 12:25:51 +0000. Up 163.82 seconds.
+[[0;32m  OK  [0m] Started Initial cloud-init job (pre-networking).
+[[0;32m  OK  [0m] Reached target Network (Pre).
+         Starting Network Service...
+[[0;32m  OK  [0m] Started Network Service.
+         Starting Wait for Network to be Configured...
+         Starting Network Name Resolution...
+[[0;32m  OK  [0m] Started Network Name Resolution.
+[[0;32m  OK  [0m] Reached target Host and Network Name Lookups.
+[[0;32m  OK  [0m] Reached target Network.
+[[0;32m  OK  [0m] Started Wait for Network to be Configured.
+         Starting Initial cloud-init job (metadata service crawler)...
+[  167.900091] cloud-init[681]: Cloud-init v. 23.1.2-0ubuntu0~18.04.1 running 'init' at Sun, 17 Nov 2024 12:25:55 +0000. Up 167.74 seconds.
+[  167.982137] cloud-init[681]: ci-info: ++++++++++++++++++++++++++++++++++++++Net device info+++++++++++++++++++++++++++++++++++++++
+[  167.989739] cloud-init[681]: ci-info: +--------+------+-----------------------------+---------------+--------+-------------------+
+[  167.998544] cloud-init[681]: ci-info: | Device |  Up  |           Address           |      Mask     | Scope  |     Hw-Address    |
+[  168.007033] cloud-init[681]: ci-info: +--------+------+-----------------------------+---------------+--------+-------------------+
+[  168.014910] cloud-init[681]: ci-info: | enp0s3 | True |          10.0.2.15          | 255.255.255.0 | global | 02:3b:7b:b7:3b:2d |
+[  168.022778] cloud-init[681]: ci-info: | enp0s3 | True |  fe80::3b:7bff:feb7:3b2d/64 |       .       |  link  | 02:3b:7b:b7:3b:2d |
+[  168.031035] cloud-init[681]: ci-info: | enp0s8 | True |        192.168.56.102       | 255.255.255.0 | global | 08:00:27:c0:1c:2d |
+[  168.038694] cloud-init[681]: ci-info: | enp0s8 | True | fe80::a00:27ff:fec0:1c2d/64 |       .       |  link  | 08:00:27:c0:1c:2d |
+[  168.047097] cloud-init[681]: ci-info: |   lo   | True |          127.0.0.1          |   255.0.0.0   |  host  |         .         |
+[  168.055919] cloud-init[681]: ci-info: |   lo   | True |           ::1/128           |       .       |  host  |         .         |
+[  168.063974] cloud-init[681]: ci-info: +--------+------+-----------------------------+---------------+--------+-------------------+
+[  168.072143] cloud-init[681]: ci-info: +++++++++++++++++++++++++++++Route IPv4 info+++++++++++++++++++++++++++++
+[  168.081513] cloud-init[681]: ci-info: +-------+--------------+----------+-----------------+-----------+-------+
+[  168.086325] cloud-init[681]: ci-info: | Route | Destination  | Gateway  |     Genmask     | Interface | Flags |
+[  168.090601] cloud-init[681]: ci-info: +-------+--------------+----------+-----------------+-----------+-------+
+[  168.095392] cloud-init[681]: ci-info: |   0   |   0.0.0.0    | 10.0.2.2 |     0.0.0.0     |   enp0s3  |   UG  |
+[  168.099343] cloud-init[681]: ci-info: |   1   |   10.0.2.0   | 0.0.0.0  |  255.255.255.0  |   enp0s3  |   U   |
+[  168.103257] cloud-init[681]: ci-info: |   2   |   10.0.2.2   | 0.0.0.0  | 255.255.255.255 |   enp0s3  |   UH  |
+[  168.108333] cloud-init[681]: ci-info: |   3   | 192.168.56.0 | 0.0.0.0  |  255.255.255.0  |   enp0s8  |   U   |
+[  168.113347] cloud-init[681]: ci-info: +-------+--------------+----------+-----------------+-----------+-------+
+[  168.118179] cloud-init[681]: ci-info: +++++++++++++++++++Route IPv6 info+++++++++++++++++++
+[  168.122299] cloud-init[681]: ci-info: +-------+-------------+---------+-----------+-------+
+[  168.126855] cloud-init[681]: ci-info: | Route | Destination | Gateway | Interface | Flags |
+[  168.130893] cloud-init[681]: ci-info: +-------+-------------+---------+-----------+-------+
+[  168.134837] cloud-init[681]: ci-info: |   1   |  fe80::/64  |    ::   |   enp0s8  |   U   |
+[  168.138947] cloud-init[681]: ci-info: |   2   |  fe80::/64  |    ::   |   enp0s3  |   U   |
+[  168.142612] cloud-init[681]: ci-info: |   4   |    local    |    ::   |   enp0s3  |   U   |
+[  168.146271] cloud-init[681]: ci-info: |   5   |    local    |    ::   |   enp0s8  |   U   |
+[  168.150053] cloud-init[681]: ci-info: |   6   |   ff00::/8  |    ::   |   enp0s8  |   U   |
+[  168.153573] cloud-init[681]: ci-info: |   7   |   ff00::/8  |    ::   |   enp0s3  |   U   |
+[  168.157484] cloud-init[681]: ci-info: +-------+-------------+---------+-----------+-------+
+[[0;32m  OK  [0m] Started Initial cloud-init job (metadata service crawler).
+[[0;32m  OK  [0m] Reached target Cloud-config availability.
+[[0;32m  OK  [0m] Reached target System Initialization.
+[[0;32m  OK  [0m] Started Message of the Day.
+[[0;32m  OK  [0m] Started Daily Cleanup of Temporary Directories.
+[[0;32m  OK  [0m] Listening on D-Bus System Message Bus Socket.
+[[0;32m  OK  [0m] Listening on ACPID Listen Socket.
+[[0;32m  OK  [0m] Started Ubuntu Advantage Timer for running repeated jobs.
+         Starting Socket activation for snappy daemon.
+[[0;32m  OK  [0m] Started Daily apt download activities.
+[[0;32m  OK  [0m] Listening on UUID daemon activation socket.
+[[0;32m  OK  [0m] Listening on cloud-init hotplug hook socket.
+[[0;32m  OK  [0m] Started Discard unused blocks once a week.
+[[0;32m  OK  [0m] Started Daily apt upgrade and clean activities.
+[[0;32m  OK  [0m] Reached target Timers.
+[[0;32m  OK  [0m] Started ACPI Events Check.
+[[0;32m  OK  [0m] Reached target Paths.
+         Starting LXD - unix socket.
+[[0;32m  OK  [0m] Listening on Open-iSCSI iscsid Socket.
+[[0;32m  OK  [0m] Reached target Network is Online.
+[[0;32m  OK  [0m] Reached target Remote File Systems (Pre).
+         Starting Availability of block devices...
+         Mounting /vagrant...
+[[0;32m  OK  [0m] Listening on Socket activation for snappy daemon.
+[[0;32m  OK  [0m] Listening on LXD - unix socket.
+[[0;32m  OK  [0m] Started Availability of block devices.
+[[0;32m  OK  [0m] Mounted /vagrant.
+[[0;32m  OK  [0m] Reached target Remote File Systems.
+[[0;32m  OK  [0m] Reached target Sockets.
+[[0;32m  OK  [0m] Reached target Basic System.
+[[0;32m  OK  [0m] Reached target Login Prompts (Pre).
+         Starting Login Service...
+[[0;32m  OK  [0m] Started irqbalance daemon.
+         Starting System Logging Service...
+         Starting LSB: Record successful boot for GRUB...
+         Starting Accounts Service...
+[[0;32m  OK  [0m] Started Regular background program processing daemon.
+         Starting Message of the Day...
+         Starting Dispatcher daemon for systemd-networkd...
+         Starting Container Runtime Interface for OCI (CRI-O)...
+[[0;32m  OK  [0m] Started FUSE filesystem for LXC.
+         Starting Virtualbox guest utils...
+         Starting Permit User Sessions...
+[[0;32m  OK  [0m] Started Deferred execution scheduler.
+[[0;32m  OK  [0m] Started D-Bus System Message Bus.
+[[0;32m  OK  [0m] Started Login Service.
+[[0;32m  OK  [0m] Started Unattended Upgrades Shutdown.
+         Starting LXD - container startup/shutdown...
+         Starting LSB: automatic crash report generation...
+         Starting OpenBSD Secure Shell server...
+         Starting Snap Daemon...
+[[0;32m  OK  [0m] Started System Logging Service.
+[[0;32m  OK  [0m] Started Permit User Sessions.
+         Starting Authorization Manager...
+         Starting Terminate Plymouth Boot Screen...
+         Starting Hold until boot process finishes up...
+[[0;32m  OK  [0m] Started Hold until boot process finishes up.
+[[0;32m  OK  [0m] Started Terminate Plymouth Boot Screen.
+         Starting Set console scheme...
+[[0;32m  OK  [0m] Started Serial Getty on ttyS0.
+[[0;32m  OK  [0m] Started Set console scheme.
+[[0;32m  OK  [0m] Created slice system-getty.slice.
+[[0;32m  OK  [0m] Started Getty on tty1.
+[[0;32m  OK  [0m] Reached target Login Prompts.
+[[0;32m  OK  [0m] Started OpenBSD Secure Shell server.
+[[0;32m  OK  [0m] Started Authorization Manager.
+[[0;32m  OK  [0m] Started Accounts Service.
+[[0;32m  OK  [0m] Started LSB: automatic crash report generation.
+[[0;32m  OK  [0m] Started LSB: Record successful boot for GRUB.
+[[0;32m  OK  [0m] Started Virtualbox guest utils.
+[[0;32m  OK  [0m] Started LXD - container startup/shutdown.
+[[0;32m  OK  [0m] Created slice User Slice of vagrant.
+[[0;32m  OK  [0m] Started Dispatcher daemon for systemd-networkd.
+[[0;32m  OK  [0m] Started Session 2 of user vagrant.
+         Starting User Manager for UID 1000...
+[[0;32m  OK  [0m] Started User Manager for UID 1000.
+[  171.653946] overlayfs: unrecognized mount option "metacopy=on" or missing value
+[  171.668533] overlayfs: unrecognized mount option "metacopy=on" or missing value
+[[0;32m  OK  [0m] Started Snap Daemon.
+         Starting Wait until snapd is fully seeded...
+         Starting Time & Date Service...
+[[0;32m  OK  [0m] Started Time & Date Service.
+[[0;32m  OK  [0m] Started Wait until snapd is fully seeded.
+         Starting Apply the settings specified in cloud-config...
+[[0;32m  OK  [0m] Started Container Runtime Interface for OCI (CRI-O).
+[[0;32m  OK  [0m] Started kubelet: The Kubernetes Node Agent.
+[  173.329750] cloud-init[1261]: Cloud-init v. 23.1.2-0ubuntu0~18.04.1 running 'modules:config' at Sun, 17 Nov 2024 12:26:01 +0000. Up 173.15 seconds.
+[[0;32m  OK  [0m] Started Apply the settings specified in cloud-config.
+[[0;32m  OK  [0m] Reached target Multi-User System.
+[[0;32m  OK  [0m] Reached target Graphical Interface.
+         Starting Update UTMP about System Runlevel Changes...
+         Starting Execute cloud user/final scripts...
+[[0;32m  OK  [0m] Started Update UTMP about System Runlevel Changes.
+         Stopping User Manager for UID 1000...
+[  174.414684] cloud-init[1451]: Cloud-init v. 23.1.2-0ubuntu0~18.04.1 running 'modules:final' at Sun, 17 Nov 2024 12:26:02 +0000. Up 174.02 seconds.
+[  174.420960] cloud-init[1451]: Cloud-init v. 23.1.2-0ubuntu0~18.04.1 finished at Sun, 17 Nov 2024 12:26:02 +0000. Datasource DataSourceNoCloud [seed=/dev/sdb][dsmode=net].  Up 174.39 seconds
+[[0;32m  OK  [0m] Stopped User Manager for UID 1000.
+[[0;32m  OK  [0m] Removed slice User Slice of vagrant.
+
+Ubuntu 18.04.6 LTS kubnode1 ttyS0
+
+kubnode1 login: [[0;32m  OK  [0m] Created slice User Slice of vagrant.
+         Starting User Manager for UID 1000...
+[[0;32m  OK  [0m] Started Session 4 of user vagrant.
+[[0;32m  OK  [0m] Started User Manager for UID 1000.
+[[0;32m  OK  [0m] Created slice libcontainer containe…6276_4794_90f8_39877d84b8d4.slice.
+[[0;32m  OK  [0m] Created slice libcontainer containe…2696_4953_84c9_4b16729520fb.slice.
+[[0;32m  OK  [0m] Created slice libcontainer containe…6581_4daf_aaaa_1ea655e77ed3.slice.
+[[0;32m  OK  [0m] Created slice libcontainer containe…ec0a_4e17_881c_db8c3749f71d.slice.
+[  249.060949] overlayfs: unrecognized mount option "volatile" or missing value
+[[0;32m  OK  [0m] Started crio-conmon-4fd28e48da3f6e2…cc947da8c2d41c79d33cd0883fb.scope.
+[[0;32m  OK  [0m] Started libcontainer container 4fd2…8647b6cc947da8c2d41c79d33cd0883fb.
+[[0;32m  OK  [0m] Started crio-conmon-1f373e940835a41…0c90b645254e83c98e081aa59f1.scope.
+[[0;32m  OK  [0m] Started libcontainer container 1f37…ce46dd0c90b645254e83c98e081aa59f1.
+[[0;32m  OK  [0m] Started crio-conmon-b20fe2fc9462390…40d9b30d8bc35bec2b169374c00.scope.
+[[0;32m  OK  [0m] Started libcontainer container b20f…a3851140d9b30d8bc35bec2b169374c00.
+[[0;32m  OK  [0m] Started crio-conmon-12277e747e31818…b3963351e9e4266db5718e56c69.scope.
+[[0;32m  OK  [0m] Started libcontainer container 1227…6fbd62b3963351e9e4266db5718e56c69.
+[[0;32m  OK  [0m] Started Daily apt upgrade and clean activities.
+         Stopping Availability of block devices...
+         Stopping Authorization Manager...
+         Stopping User Manager for UID 1000...
+         Stopping libcontainer container 4fd…8647b6cc947da8c2d41c79d33cd0883fb.
+[[0;32m  OK  [0m] Stopped target Graphical Interface.
+         Stopping libcontainer container 1f3…ce46dd0c90b645254e83c98e081aa59f1.
+[[0;32m  OK  [0m] Stopped target Cloud-init target.
+[[0;32m  OK  [0m] Stopped target Timers.
+[[0;32m  OK  [0m] Stopped Discard unused blocks once a week.
+[[0;32m  OK  [0m] Stopped Daily apt upgrade and clean activities.
+[[0;32m  OK  [0m] Stopped Ubuntu Advantage Timer for running repeated jobs.
+[[0;32m  OK  [0m] Stopped Message of the Day.
+[[0;32m  OK  [0m] Stopped target Host and Network Name Lookups.
+[[0;32m  OK  [0m] Stopped Execute cloud user/final scripts.
+[[0;32m  OK  [0m] Stopped target Multi-User System.
+         Stopping OpenBSD Secure Shell server...
+         Stopping kubelet: The Kubernetes Node Agent...
+         Stopping Unattended Upgrades Shutdown...
+         Stopping Regular background program processing daemon...
+         Stopping LSB: Record successful boot for GRUB...
+         Stopping Dispatcher daemon for systemd-networkd...
+         Stopping FUSE filesystem for LXC...
+         Stopping LSB: automatic crash report generation...
+         Stopping Deferred execution scheduler...
+         Stopping D-Bus System Message Bus...
+          Stopping Authorization Manager...
+         Stopping libcontainer container 1aa…9422fa0d03dc53533f6430544e124f9d2.
+         Stopping User Manager for UID 1000...
+[[0;32m  OK  [0m] Stopped target Timers.
+[[0;32m  OK  [0m] Stopped Daily apt upgrade and clean activities.
+[[0;32m  OK  [0m] Stopped Discard unused blocks once a week.
+[[0;32m  OK  [0m] Stopped Daily apt download activities.
+[[0;32m  OK  [0m] Stopped Daily Cleanup of Temporary Directories.
+         Stopping libcontainer container b98…8f754d659b84d80a868a413dca875c849.
+[[0;32m  OK  [0m] Closed Load/Save RF Kill Switch Status /dev/rfkill Watch.
+         Stopping libcontainer container 2c6…bc7d36c609b5716692aaef373f1c3eb46.
+         Stopping libcontainer container 7e7…ec7ec84f6cca7b69349d8184e97d6dbf1.
+         Stopping libcontainer container a43…d63c134aa3fbc485ab9f0b4154dab7665.
+         Stopping Session 13 of user vagrant.
+[[0;32m  OK  [0m] Stopped Ubuntu Advantage Timer for running repeated jobs.
+[[0;32m  OK  [0m] Stopped target Cloud-init target.
+[[0;32m  OK  [0m] Stopped Execute cloud user/final scripts.
+[[0;32m  OK  [0m] Stopped Apply the settings specified in cloud-config.
+[[0;32m  OK  [0m] Stopped target Cloud-config availability.
+         Stopping libcontainer container f51…a30439cfc0378372f571b6a43a2fdef14.
+         Stopping libcontainer container acc…72115bbfdcbec096cccc95c589a8399dc.
+         Stopping Availability of block devices...
+         Stopping libcontainer container 228…2c918acbf4cf771a85a79100061a2e52c.
+[[0;32m  OK  [0m] Stopped target Host and Network Name Lookups.
+         Stopping libcontainer container e19…523860db832e77af61e99c753f12c84dd.
+[[0;32m  OK  [0m] Stopped Message of the Day.
+[[0;32m  OK  [0m] Stopped target System Time Synchronized.
+         Stopping libcontainer container 8b0…ddf76119a2d1d9f1285742e056e78a8a5.
+[[0;32m  OK  [0m] Stopped target Graphical Interface.
+         Stopping Accounts Service...
+[[0;32m  OK  [0m] Stopped target Multi-User System.
+         Stopping System Logging Service...
+         Stopping D-Bus System Message Bus...
+         Stopping kubelet: The Kubernetes Node Agent...
+         Stopping OpenBSD Secure Shell server...
+         Stopping Deferred execution scheduler...
+         Stopping Unattended Upgrades Shutdown...
+         Stopping Regular background program processing daemon...
+         Stopping Virtualbox guest utils...
+         Stopping LSB: Record successful boot for GRUB...
+[[0;32m  OK  [0m] Stopped target Login Prompts.
+         Stopping Getty on tty1...
+         Stopping Serial Getty on ttyS0...
+         Stopping Dispatcher daemon for systemd-networkd...
+         Stopping LXD - container startup/shutdown...
+         Stopping LSB: automatic crash report generation...
+         Stopping irqbalance daemon...
+         Stopping FUSE filesystem for LXC...
+[[0;32m  OK  [0m] Stopped Wait until snapd is fully seeded.
+[[0;32m  OK  [0m] Stopped Regular background program processing daemon.
+[[0;32m  OK  [0m] Stopped Authorization Manager.
+[[0;32m  OK  [0m] Stopped OpenBSD Secure Shell server.
+[[0;32m  OK  [0m] Stopped User Manager for UID 1000.
+[[0;32m  OK  [0m] Stopped Session 13 of user vagrant.
+[[0;32m  OK  [0m] Unmounted /var/lib/lxcfs.
+[[0;32m  OK  [0m] Stopped Deferred execution scheduler.
+[[0;32m  OK  [0m] Stopped Accounts Service.
+[[0;32m  OK  [0m] Stopped irqbalance daemon.
+[[0;32m  OK  [0m] Stopped Dispatcher daemon for systemd-networkd.
+[[0;32m  OK  [0m] Stopped Serial Getty on ttyS0.
+[[0;32m  OK  [0m] Stopped Getty on tty1.
+[[0;32m  OK  [0m] Stopped D-Bus System Message Bus.
+[[0;32m  OK  [0m] Stopped FUSE filesystem for LXC.
+[[0;32m  OK  [0m] Stopped libcontainer container b98f…8f754d659b84d80a868a413dca875c849.
+[[0;32m  OK  [0m] Stopped libcontainer container a432…d63c134aa3fbc485ab9f0b4154dab7665.
+[[0;32m  OK  [0m] Stopped libcontainer container 2285…2c918acbf4cf771a85a79100061a2e52c.
+[[0;32m  OK  [0m] Stopped libcontainer container acce…72115bbfdcbec096cccc95c589a8399dc.
+[[0;32m  OK  [0m] Stopped libcontainer container 1aa1…9422fa0d03dc53533f6430544e124f9d2.
+[[0;32m  OK  [0m] Stopped libcontainer container 7e73…ec7ec84f6cca7b69349d8184e97d6dbf1.
+[[0;32m  OK  [0m] Stopped libcontainer container 2c6f…bc7d36c609b5716692aaef373f1c3eb46.
+[[0;32m  OK  [0m] Stopped kubelet: The Kubernetes Node Agent.
+[[0;32m  OK  [0m] Removed slice libcontainer containe…28de_448a_b657_8bd86a1f4762.slice.
+[[0;32m  OK  [0m] Removed slice libcontainer containe…f9ea_430b_b0f4_cd083d01a67b.slice.
+[[0;32m  OK  [0m] Removed slice libcontainer containe…b752_44e9_a69d_6ca43dde0153.slice.
+[[0;32m  OK  [0m] Removed slice libcontainer containe…bbc3_4d69_bbab_9ec36e028e46.slice.
+[[0;32m  OK  [0m] Removed slice system-getty.slice.
+[[0;32m  OK  [0m] Removed slice system-serial\x2dgetty.slice.
+[[0;32m  OK  [0m] Stopped target Login Prompts (Pre).
+[[0;32m  OK  [0m] Removed slice User Slice of vagrant.
+         Stopping Permit User Sessions...
+[[0;32m  OK  [0m] Stopped System Logging Service.
+[[0;32m  OK  [0m] Stopped LSB: Record successful boot for GRUB.
+[[0;32m  OK  [0m] Stopped LXD - container startup/shutdown.
+[[0;32m  OK  [0m] Stopped LSB: automatic crash report generation.
+[[0;32m  OK  [0m] Unmounted /run/user/1000.
+[[0;32m  OK  [0m] Stopped Availability of block devices.
+[[0;32m  OK  [0m] Stopped Permit User Sessions.
+[[0;32m  OK  [0m] Stopped target Remote File Systems.
+         Unmounting /vagrant...
+[[0;32m  OK  [0m] Unmounted /vagrant.
+[[0;32m  OK  [0m] Stopped target Remote File Systems (Pre).
+[[0;32m  OK  [0m] Stopped libcontainer container 8b0f…ddf76119a2d1d9f1285742e056e78a8a5.
+[[0;32m  OK  [0m] Stopped Virtualbox guest utils.
+[[0;32m  OK  [0m] Stopped Unattended Upgrades Shutdown.
+         Stopping Login Service...
+[[0;32m  OK  [0m] Stopped Login Service.
+[[0;32m  OK  [0m] Stopped target User and Group Name Lookups.
+[[0;32m  OK  [0m] Stopped libcontainer container f51e…a30439cfc0378372f571b6a43a2fdef14.
+[[0;32m  OK  [0m] Stopped libcontainer container e19b…523860db832e77af61e99c753f12c84dd.
+[[0;32m  OK  [0m] Removed slice libcontainer containe…532f_43da_8d09_121df47d803e.slice.
+[[0;32m  OK  [0m] Removed slice libcontainer containe…5f6d_4ec5_bf29_f75d26170189.slice.
+         Stopping Container Runtime Interface for OCI (CRI-O)...
+[[0;32m  OK  [0m] Stopped Container Runtime Interface for OCI (CRI-O).
+[[0;32m  OK  [0m] Stopped target Network is Online.
+[[0;32m  OK  [0m] Stopped target Network.
+         Stopping Network Name Resolution...
+[[0;32m  OK  [0m] Stopped target Basic System.
+[[0;32m  OK  [0m] Stopped target Paths.
+[[0;32m  OK  [0m] Stopped ACPI Events Check.
+[[0;32m  OK  [0m] Stopped target Sockets.
+[[0;32m  OK  [0m] Closed LXD - unix socket.
+[[0;32m  OK  [0m] Closed UUID daemon activation socket.
+[[0;32m  OK  [0m] Closed D-Bus System Message Bus Socket.
+[[0;32m  OK  [0m] Closed Syslog Socket.
+[[0;32m  OK  [0m] Closed Open-iSCSI iscsid Socket.
+[[0;32m  OK  [0m] Closed Socket activation for snappy daemon.
+[[0;32m  OK  [0m] Closed cloud-init hotplug hook socket.
+[[0;32m  OK  [0m] Closed ACPID Listen Socket.
+[[0;32m  OK  [0m] Stopped target Slices.
+[[0;32m  OK  [0m] Removed slice User and Session Slice.
+[[0;32m  OK  [0m] Stopped target System Initialization.
+         Stopping Load/Save Random Seed...
+         Stopping Update UTMP about System Boot/Shutdown...
+[[0;32m  OK  [0m] Stopped Initial cloud-init job (metadata service crawler).
+[[0;32m  OK  [0m] Stopped Wait for Network to be Configured.
+[[0;32m  OK  [0m] Stopped target Local Encrypted Volumes.
+[[0;32m  OK  [0m] Stopped Dispatch Password Requests to Console Directory Watch.
+[[0;32m  OK  [0m] Stopped Forward Password Requests to Wall Directory Watch.
+[[0;32m  OK  [0m] Stopped Network Name Resolution.
+[[0;32m  OK  [0m] Stopped Load/Save Random Seed.
+         Stopping Network Service...
+[[0;32m  OK  [0m] Stopped Update UTMP about System Boot/Shutdown.
+[[0;32m  OK  [0m] Stopped Create Volatile Files and Directories.
+[[0;32m  OK  [0m] Stopped target Local File Systems.
+         Unmounting /run/ipcns/91ee46c2-6015-4beb-8c0f-0499b92dadd1...
+         Unmounting /run/netns/91ee46c2-6015-4beb-8c0f-0499b92dadd1...
+         Unmounting /run/ipcns/2fed3631-a0fd-406b-8439-335b4d922de9...
+         Unmounting /var/lib/containers/stor…349df7ad3790600e52607e2e/merged...
+         Unmounting /var/lib/kubelet/pods/02…projected/kube-api-access-jvh6l...
+         Unmounting /run/ipcns/15b83932-115f-4755-a970-737b0e3dbf32...
+         Unmounting /var/lib/containers/stor…3a1d225f6be0bcaeb8257c60/merged...
+         Unmounting /var/lib/containers/stor…694fd8ccdcd19dc647ae4d3d/merged...
+         Unmounting /run/utsns/15b83932-115f-4755-a970-737b0e3dbf32...
+         Unmounting /var/lib/containers/stor…11c99a65b46e97833a1086c2/merged...
+         Unmounting /var/lib/containers/stor…8de25f19b7d0a1b26fb713c7/merged...
+         Unmounting /run/ipcns/18f947db-9837-46a3-8578-6906baad71b4...
+[[0;32m  OK  [0m] Stopped target Mounted snaps.
+[[0;32m  OK  [0m] Stopped target Mounting snaps.
+         Unmounting /run/netns/ed1024e3-6a00-4965-81c0-fb0aff21b7d9...
+         Unmounting /var/lib/containers/stor…bb3106ab2d4e772340434a72/merged...
+         Unmounting /run/ipcns/3973c17e-9049-4bed-ba11-93572e80b88f...
+         Unmounting /var/lib/containers/stor…2fdc3ca0f9918e3660eb50e3/merged...
+         Unmounting /run/containers/storage/…070dfb7e94e79984d4/userdata/shm...
+         Unmounting /run/utsns/3fc8e7f3-cf83-4bbf-b8f8-25f7a993afc1...
+         Unmounting /var/lib/containers/stor…5d4baed361b86f11632d1c40/merged...
+         Unmounting /var/lib/kubelet/pods/32…o~secret/calico-apiserver-certs...
+         Unmounting /var/lib/containers/stor…27279f19d7f46c2a62e06e0f/merged...
+         Unmounting /var/lib/containers/stor…b886337386f0bc2e896156de/merged...
+         Unmounting /var/lib/kubelet/pods/c1…o~secret/calico-apiserver-certs...
+         Unmounting /var/lib/kubelet/pods/32…projected/kube-api-access-dc7hn...
+         Unmounting /var/lib/containers/stor…84b60c5f5bb566aa60280147/merged...
+         Unmounting /run/netns/15b83932-115f-4755-a970-737b0e3dbf32...
+         Unmounting /run/ipcns/08e8e0b7-b951-472f-ac64-98de10eb0c58...
+         Unmounting /run/containers/storage/…793869abd29e39deec/userdata/shm...
+         Unmounting /var/lib/kubelet/pods/c1…projected/kube-api-access-dbb9c...
+         Unmounting /run/ipcns/3fc8e7f3-cf83-4bbf-b8f8-25f7a993afc1...
+         Unmounting /run/netns/18f947db-9837-46a3-8578-6906baad71b4...
+         Unmounting /run/netns/3973c17e-9049-4bed-ba11-93572e80b88f...
+         Unmounting /run/utsns/91ee46c2-6015-4beb-8c0f-0499b92dadd1...
+         Unmounting /run/containers/storage/…457f1d8f2aedcc9caf/userdata/shm...
+         Unmounting /var/lib/containers/stor…2181e997d7f8152c449d973b/merged...
+         Unmounting /var/lib/containers/stor…f121e9568b4e14088b95b332/merged...
+         Unmounting /run/utsns/ed1024e3-6a00-4965-81c0-fb0aff21b7d9...
+         Unmounting /var/lib/kubelet/pods/22…projected/kube-api-access-h6wqv...
+         Unmounting /run/containers/storage/…57409e81601548a693/userdata/shm...
+         Unmounting /run/ipcns/ed1024e3-6a00-4965-81c0-fb0aff21b7d9...
+         Unmounting /run/utsns/3973c17e-9049-4bed-ba11-93572e80b88f...
+         Unmounting /run/containers/storage/…c495cf171b2b06ac78/userdata/shm...
+         Unmounting /var/lib/kubelet/pods/65…projected/kube-api-access-4nmnh...
+         Unmounting /run/utsns/18f947db-9837-46a3-8578-6906baad71b4...
+         Unmounting /run/netns/3fc8e7f3-cf83-4bbf-b8f8-25f7a993afc1...
+         Unmounting /run/containers/storage/…e1a7aeb27014f1945c/userdata/shm...
+         Unmounting /run/containers/storage/…3ab56265cd924e65fe/userdata/shm...
+         Unmounting /run/containers/storage/…63f53285405fbedd22/userdata/shm...
+         Unmounting /var/lib/containers/stor…be4b54ec925571fa70dca4b1/merged...
+         Unmounting /var/lib/containers/stor…4d1c585948dcfad3723a3ccc/merged...
+         Unmounting /run/utsns/bdbdf4c8-fe4b-4b03-a2f1-aa593adf53c8...
+         Unmounting /var/lib/containers/stor…69fa275d7d9946ecdcd29dff/merged...
+         Unmounting /run/netns/2fcfa4ef-b1be-4cf9-892c-868bd9de249f...
+         Unmounting /run/ipcns/bdbdf4c8-fe4b-4b03-a2f1-aa593adf53c8...
+         Unmounting /run/netns/08e8e0b7-b951-472f-ac64-98de10eb0c58...
+         Unmounting /run/netns/2fed3631-a0fd-406b-8439-335b4d922de9...
+         Unmounting /run/utsns/2fcfa4ef-b1be-4cf9-892c-868bd9de249f...
+         Unmounting /var/lib/containers/stor…347d30967b92a6a50484f19a/merged...
+         Unmounting /run/containers/storage/…1e79e8e8dba38aee59/userdata/shm...
+         Unmounting /run/ipcns/2fcfa4ef-b1be-4cf9-892c-868bd9de249f...
+         Unmounting /run/netns/bdbdf4c8-fe4b-4b03-a2f1-aa593adf53c8...
+         Unmounting /var/lib/containers/stor…ac5fd6cfa150a7aa8ec4b263/merged...
+         Unmounting /run/utsns/2fed3631-a0fd-406b-8439-335b4d922de9...
+         Unmounting /var/lib/kubelet/pods/9a…projected/kube-api-access-t5b7k...
+         Unmounting /run/containers/storage/…236d0bff3b2cf2a0ee/userdata/shm...
+         Unmounting /var/lib/containers/stor…221c60a569f84dfe61632f34/merged...
+         Unmounting /run/utsns/08e8e0b7-b951-472f-ac64-98de10eb0c58...
+         Unmounting /var/lib/containers/stor…3f6a52debd826e0c8760d927/merged...
+         Unmounting /var/lib/containers/stor…0b2ed14c39e4a8da2e26cad7/merged...
+         Unmounting /var/lib/containers/stor…65e130c3171879436c948d9f/merged...
+[[0;32m  OK  [0m] Stopped Network Service.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/91ee46c2-6015-4beb-8c0f-0499b92dadd1.
+[[0;32m  OK  [0m] Unmounted /run/netns/91ee46c2-6015-4beb-8c0f-0499b92dadd1.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/2fed3631-a0fd-406b-8439-335b4d922de9.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…f3349df7ad3790600e52607e2e/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/02d…o~projected/kube-api-access-jvh6l.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/15b83932-115f-4755-a970-737b0e3dbf32.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…f63a1d225f6be0bcaeb8257c60/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…3c694fd8ccdcd19dc647ae4d3d/merged.
+[[0;32m  OK  [0m] Unmounted /run/utsns/15b83932-115f-4755-a970-737b0e3dbf32.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…7311c99a65b46e97833a1086c2/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…4e8de25f19b7d0a1b26fb713c7/merged.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/18f947db-9837-46a3-8578-6906baad71b4.
+[[0;32m  OK  [0m] Unmounted /run/netns/ed1024e3-6a00-4965-81c0-fb0aff21b7d9.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…afbb3106ab2d4e772340434a72/merged.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/3973c17e-9049-4bed-ba11-93572e80b88f.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…6f2fdc3ca0f9918e3660eb50e3/merged.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…bf070dfb7e94e79984d4/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /run/utsns/3fc8e7f3-cf83-4bbf-b8f8-25f7a993afc1.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…c25d4baed361b86f11632d1c40/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/326….io~secret/calico-apiserver-certs.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…1a27279f19d7f46c2a62e06e0f/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…1db886337386f0bc2e896156de/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/c1a….io~secret/calico-apiserver-certs.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/326…o~projected/kube-api-access-dc7hn.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…0884b60c5f5bb566aa60280147/merged.
+[[0;32m  OK  [0m] Unmounted /run/netns/15b83932-115f-4755-a970-737b0e3dbf32.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/08e8e0b7-b951-472f-ac64-98de10eb0c58.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…b6793869abd29e39deec/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/c1a…o~projected/kube-api-access-dbb9c.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/3fc8e7f3-cf83-4bbf-b8f8-25f7a993afc1.
+[[0;32m  OK  [0m] Unmounted /run/netns/18f947db-9837-46a3-8578-6906baad71b4.
+[[0;32m  OK  [0m] Unmounted /run/netns/3973c17e-9049-4bed-ba11-93572e80b88f.
+[[0;32m  OK  [0m] Unmounted /run/utsns/91ee46c2-6015-4beb-8c0f-0499b92dadd1.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…9a457f1d8f2aedcc9caf/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…7e2181e997d7f8152c449d973b/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…55f121e9568b4e14088b95b332/merged.
+[[0;32m  OK  [0m] Unmounted /run/utsns/ed1024e3-6a00-4965-81c0-fb0aff21b7d9.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/22e…o~projected/kube-api-access-h6wqv.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…7c57409e81601548a693/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/ed1024e3-6a00-4965-81c0-fb0aff21b7d9.
+[[0;32m  OK  [0m] Unmounted /run/utsns/3973c17e-9049-4bed-ba11-93572e80b88f.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…55c495cf171b2b06ac78/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/654…o~projected/kube-api-access-4nmnh.
+[[0;32m  OK  [0m] Unmounted /run/utsns/18f947db-9837-46a3-8578-6906baad71b4.
+[[0;32m  OK  [0m] Unmounted /run/netns/3fc8e7f3-cf83-4bbf-b8f8-25f7a993afc1.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…43e1a7aeb27014f1945c/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…873ab56265cd924e65fe/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…af63f53285405fbedd22/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…cdbe4b54ec925571fa70dca4b1/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…e24d1c585948dcfad3723a3ccc/merged.
+[[0;32m  OK  [0m] Unmounted /run/utsns/bdbdf4c8-fe4b-4b03-a2f1-aa593adf53c8.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…d769fa275d7d9946ecdcd29dff/merged.
+[[0;32m  OK  [0m] Unmounted /run/netns/2fcfa4ef-b1be-4cf9-892c-868bd9de249f.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/bdbdf4c8-fe4b-4b03-a2f1-aa593adf53c8.
+[[0;32m  OK  [0m] Unmounted /run/netns/08e8e0b7-b951-472f-ac64-98de10eb0c58.
+[[0;32m  OK  [0m] Unmounted /run/netns/2fed3631-a0fd-406b-8439-335b4d922de9.
+[[0;32m  OK  [0m] Unmounted /run/utsns/2fcfa4ef-b1be-4cf9-892c-868bd9de249f.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…12347d30967b92a6a50484f19a/merged.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…bb1e79e8e8dba38aee59/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /run/ipcns/2fcfa4ef-b1be-4cf9-892c-868bd9de249f.
+[[0;32m  OK  [0m] Unmounted /run/netns/bdbdf4c8-fe4b-4b03-a2f1-aa593adf53c8.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…26ac5fd6cfa150a7aa8ec4b263/merged.
+[[0;32m  OK  [0m] Unmounted /run/utsns/2fed3631-a0fd-406b-8439-335b4d922de9.
+[[0;32m  OK  [0m] Unmounted /var/lib/kubelet/pods/9ad…o~projected/kube-api-access-t5b7k.
+[[0;32m  OK  [0m] Unmounted /run/containers/storage/o…71236d0bff3b2cf2a0ee/userdata/shm.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…83221c60a569f84dfe61632f34/merged.
+[[0;32m  OK  [0m] Unmounted /run/utsns/08e8e0b7-b951-472f-ac64-98de10eb0c58.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…8f3f6a52debd826e0c8760d927/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…6f0b2ed14c39e4a8da2e26cad7/merged.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/stora…4e65e130c3171879436c948d9f/merged.
+[[0;32m  OK  [0m] Stopped target Swap.
+         Unmounting /var/lib/containers/storage/overlay...
+[[0;32m  OK  [0m] Stopped target Network (Pre).
+[[0;32m  OK  [0m] Stopped Initial cloud-init job (pre-networking).
+[[0;32m  OK  [0m] Stopped Apply Kernel Variables.
+[[0;32m  OK  [0m] Stopped Load Kernel Modules.
+[[0;32m  OK  [0m] Unmounted /var/lib/containers/storage/overlay.
+[[0;32m  OK  [0m] Reached target Unmount All Filesystems.
+[[0;32m  OK  [0m] Stopped target Local File Systems (Pre).
+[[0;32m  OK  [0m] Stopped Remount Root and Kernel File Systems.
+         Stopping Monitoring of LVM2 mirrors…ng dmeventd or progress polling...
+[[0;32m  OK  [0m] Stopped Create Static Device Nodes in /dev.
+[[0;32m  OK  [0m] Reached target Shutdown.
+[[0;32m  OK  [0m] Reached target Final Step.
+         Starting Power-Off...
+[12923.413880] reboot: Power down

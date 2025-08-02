@@ -1,0 +1,149 @@
+Vagrant.configure(2) do |config|
+
+	# before you must install these plugins to speed up vagrant provisionning
+  # vagrant plugin install vagrant-faster
+  # vagrant plugin install vagrant-cachier
+
+  config.cache.auto_detect = true
+	# Set some variables
+  
+	ingress 			= ""
+	wordpress 		= ""
+  monitoring		= ""
+  consulsync		= ""
+  etcHosts 			= ""
+  grafanaUrl 		= ""
+  prometheusUrl = ""
+  wordpressUrl 	= ""
+
+	# Check ingress controller
+	case ARGV[0]
+		when "provision", "up"
+  	print "Do you want ingress controller (no/[nginx]/istio) ?\n"
+  	ingress = STDIN.gets.chomp
+    #unless ingress.empty? then ingress else 'nginx' end
+  	print "\n"
+
+	  print "Do you want a wordpress in your kubernetes cluster (y/[n]) ?\n"
+  	wordpress = STDIN.gets.chomp
+    unless wordpress.empty? then wordpress else 'n' end
+  	print "\n"
+
+		# check if wordpress
+  	if wordpress == "y"
+ 			print "Which url for your wordpress ([wordpress.kub]) ?"
+  		wordpressUrl = STDIN.gets.chomp
+		end
+
+    print "Do you want a monitoring in your kubernetes cluster (y/[n]) ?\n"
+    monitoring = STDIN.gets.chomp
+    unless monitoring.empty? then monitoring else 'n' end
+    print "\n"
+
+		# check if monitoring
+  	if monitoring == "y"
+
+			# prometheus url
+ 			print "Which url for your prometheus (prometheus.kub) ?"
+  		prometheusUrl = STDIN.gets.chomp
+
+			# grafana url
+ 			print "Which url for your grafana (grafana.kub) ?"
+  		grafanaUrl = STDIN.gets.chomp
+		end
+
+    # consul-sync
+    print "Do you want to deploy consul-sync and an example (y/[n]) ?\n"
+    consulsync = STDIN.gets.chomp
+    unless consulsync.empty? then consulsync else 'n' end
+    print "\n"
+
+  end
+
+	# some settings for common server (not for haproxy)
+  common = <<-SHELL
+  sudo apt update -qq 2>&1 >/dev/null
+  sudo apt install -y -qq git vim tree net-tools telnet git python3-pip sshpass nfs-common 2>&1 >/dev/null
+  sudo echo "autocmd filetype yaml setlocal ai ts=2 sw=2 et" > /home/vagrant/.vimrc
+  sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+  sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config.d/60-cloudimg-settings.conf
+  sudo systemctl restart sshd
+  SHELL
+
+	# set vagrant image
+	config.vm.box = "ubuntu/jammy64"
+	config.vm.box_url = "ubuntu/jammy64"
+
+	# set servers list and their parameters
+	NODES = [
+  	{ :hostname => "autohaprox", :ip => "192.168.12.10", :cpus => 2, :mem => 512, :type => "haproxy" },
+  	{ :hostname => "autokmaster", :ip => "192.168.12.11", :cpus => 4, :mem => 2048, :type => "kub" },
+  	#{ :hostname => "autokmaster2", :ip => "192.168.12.12", :cpus => 4, :mem => 2048, :type => "kub" },
+  	#{ :hostname => "autokmaster3", :ip => "192.168.12.13", :cpus => 4, :mem => 2048, :type => "kub" },
+  	{ :hostname => "autoknode1", :ip => "192.168.12.14", :cpus => 4, :mem => 4096, :type => "kub" },
+  	#{ :hostname => "autoknode2", :ip => "192.168.12.15", :cpus => 4, :mem => 4096, :type => "kub" },
+  	#{ :hostname => "autoknode3", :ip => "192.168.12.16", :cpus => 4, :mem => 4096, :type => "kub" },
+  	{ :hostname => "autodep", :ip => "192.168.12.20", :cpus => 2, :mem => 1024, :type => "deploy" }
+	]
+
+	# define /etc/hosts for all servers
+  NODES.each do |node|
+    if node[:type] != "haproxy"
+    	etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + "' >> /etc/hosts" + "\n"
+		else
+			etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + " autoelb.kub ' >> /etc/hosts" + "\n"
+		end
+  end #end NODES
+
+	# run installation
+  NODES.each do |node|
+    config.vm.define node[:hostname] do |cfg|
+			cfg.vm.hostname = node[:hostname]
+      cfg.vm.network "private_network", ip: node[:ip]
+      cfg.vm.provider "virtualbox" do |v|
+				v.customize [ "modifyvm", :id, "--cpus", node[:cpus] ]
+        v.customize [ "modifyvm", :id, "--memory", node[:mem] ]
+        v.customize [ "modifyvm", :id, "--natdnshostresolver1", "on" ]
+        v.customize [ "modifyvm", :id, "--natdnsproxy1", "on" ]
+        v.customize [ "modifyvm", :id, "--name", node[:hostname] ]
+				v.customize [ "modifyvm", :id, "--ioapic", "on" ]
+        v.customize [ "modifyvm", :id, "--nictype1", "virtio" ]
+      end #end provider
+			
+			#for all
+      cfg.vm.provision :shell, :path => "../_generic_scripts/install_xavki.sh"
+      cfg.vm.provision :shell, :inline => etcHosts
+		  cfg.vm.provision :shell, :inline => common
+			
+			#for haproxy
+      if node[:type] == "haproxy"
+				cfg.vm.provision :shell, :path => "install_haproxy.sh", :args => ingress
+			end
+
+
+			# for the deploy server
+      if node[:type] == "deploy"
+        cfg.vm.provision :shell, :path => "install_nfs.sh"
+				cfg.vm.provision :shell, :path => "install_kubespray.sh", :args => ingress
+        cfg.vm.provision :shell, :path => "create_dir_conf.sh", :args => [prometheusUrl,grafanaUrl,wordpressUrl]
+				cfg.vm.provision :shell, :path => "install_cmaster.sh"
+        if ingress == "istio"
+          cfg.vm.provision :shell, :path => "install_istio.sh"
+				end
+        if wordpress == "y"
+          cfg.vm.provision :shell, :path => "install_wordpress.sh", :args => [wordpressUrl]
+				end
+        if monitoring == "y"
+          cfg.vm.provision :shell, :path => "install_monitoring.sh"
+				end
+        if consulsync == "y"
+				  cfg.vm.provision :shell, :path => "install_consulsync.sh"
+				end
+			end
+    end # end config
+  end # end nodes
+
+end 
+
+

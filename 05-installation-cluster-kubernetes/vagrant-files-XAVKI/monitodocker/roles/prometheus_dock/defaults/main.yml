@@ -1,0 +1,26 @@
+---
+# defaults file for prometheus_dock
+
+prometheus_dock_image: "quay.io/prometheus/prometheus:latest"
+prometheus_dock_container_name: "prometheus"
+prometheus_dock_retention_time: "365d"
+prometheus_dock_dir_configuration: "/etc/prometheus"
+prometheus_dock_dir_datas: "/var/lib/prometheus"
+prometheus_dock_scrape_interval: "5s"
+prometheus_dock_expose_port: 9090
+prometheus_dock_node_exporter_group: "all"
+prometheus_dock_cadvisor_group: "all"
+prometheus_dock_network: "monitoring"
+
+# header of prometheus settings
+prometheus_dock_var_config: 
+  global:
+    scrape_interval:     "{{ prometheus_dock_scrape_interval }}"
+    evaluation_interval: 5s 
+    external_labels:
+      env: 'production'
+  scrape_configs:
+    - job_name: prometheus
+      static_configs:
+        - targets: ['localhost:9090']
+

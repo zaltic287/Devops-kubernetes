@@ -1,0 +1,8 @@
+all:
+  hosts:
+    192.168.13.40:
+  children:
+    prometheus:
+      hosts:
+        192.168.13.41:
+

@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  prometheus:
+    image: {{ prometheus_dock_image }}
+    container_name: {{ prometheus_dock_container_name }}
+    volumes:
+     - prometheus_etc:/etc/prometheus/
+     - prometheus_data:/prometheus/
+    command: '--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus --storage.tsdb.retention.time={{ prometheus_dock_retention_time }}' 
+    ports:
+     - 9090
+    restart: always
+    networks:
+    - {{ prometheus_dock_network }}
+networks:
+  {{ prometheus_dock_network }}:
+    external:
+      name: {{ prometheus_dock_network }}
+volumes:
+  prometheus_etc:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: {{ prometheus_dock_dir_configuration }}
+  prometheus_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: {{ prometheus_dock_dir_datas }}

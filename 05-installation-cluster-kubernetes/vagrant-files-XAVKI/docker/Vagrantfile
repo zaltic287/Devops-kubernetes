@@ -1,0 +1,65 @@
+Vagrant.configure(2) do |config|
+
+	# before you must install these plugins to speed up vagrant provisionning
+  # vagrant plugin install vagrant-faster
+  # vagrant plugin install vagrant-cachier
+
+  config.cache.auto_detect = true
+	# Set some variables
+  etcHosts = ""
+
+	# some settings for common server (not for haproxy)
+  common = <<-SHELL
+  sudo apt update -qq 2>&1 >/dev/null
+  sudo apt install -y -qq curl software-properties-common git vim tree net-tools telnet git gnupg 2>&1 >/dev/null
+  sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+  sudo systemctl restart sshd
+  curl -fsSL https://get.docker.com -o get-docker.sh 2>&1 >/dev/null
+  sudo sh get-docker.sh 2>&1 >/dev/null
+  sudo usermod -aG docker vagrant
+  sudo service docker start
+  sudo curl -L "https://github.com/docker/compose/releases/download/1.25.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  sudo chmod 755 /usr/local/bin/docker-compose
+  SHELL
+
+  config.vm.box = "debian/bullseye64"
+  config.vm.box_url = "debian/bullseye64"
+
+
+	# set servers list and their parameters
+	NODES = [
+  	{ :hostname => "docker1", :ip => "192.168.20.120", :cpus => 2, :mem => 2048, :type => "docker" },
+  	{ :hostname => "docker2", :ip => "192.168.20.121", :cpus => 2, :mem => 2048, :type => "docker" }
+	]
+
+	# define /etc/hosts for all servers
+  NODES.each do |node|
+			etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + "'>> /etc/hosts" + "\n"
+  end #end NODES
+
+	# run installation
+  NODES.each do |node|
+    config.vm.define node[:hostname] do |cfg|
+			cfg.vm.hostname = node[:hostname]
+      cfg.vm.network "private_network", ip: node[:ip]
+      cfg.vm.provider "virtualbox" do |v|
+				v.customize [ "modifyvm", :id, "--cpus", node[:cpus] ]
+        v.customize [ "modifyvm", :id, "--memory", node[:mem] ]
+        v.customize [ "modifyvm", :id, "--natdnshostresolver1", "on" ]
+        v.customize [ "modifyvm", :id, "--natdnsproxy1", "on" ]
+        v.customize [ "modifyvm", :id, "--name", node[:hostname] ]
+				v.customize [ "modifyvm", :id, "--ioapic", "on" ]
+        v.customize [ "modifyvm", :id, "--nictype1", "virtio" ]
+      end #end provider
+			
+			#for all
+      cfg.vm.provision :shell, :path => "install_xavki.sh"
+      cfg.vm.provision :shell, :inline => etcHosts
+			cfg.vm.provision :shell, :inline => common
+
+    end # end config
+  end # end nodes
+
+end 
+
+

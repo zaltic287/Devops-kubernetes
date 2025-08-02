@@ -1,0 +1,8 @@
+---
+# defaults file for cadvisor_dock
+
+
+cadvisor_dock_dir_configuration: "/etc/cadvisor"
+cadvisor_dock_image: "gcr.io/google-containers/cadvisor:latest"
+cadvisor_dock_container_name: "cadvisor"
+cadvisor_dock_network: "monitoring"

@@ -1,0 +1,78 @@
+Vagrant.configure(2) do |config|
+  common = <<-SHELL
+  if ! grep -q deploykub /etc/hosts; then  sudo echo "192.168.11.120     minidepkub" >> /etc/hosts ;fi
+  if ! grep -q node01 /etc/hosts; then  sudo echo "192.168.11.121     minikmaster01" >> /etc/hosts ;fi
+  if ! grep -q node03 /etc/hosts; then  sudo echo "192.168.11.123     miniknode01" >> /etc/hosts ;fi
+  if ! grep -q node04 /etc/hosts; then  sudo echo "192.168.11.124     miniha01" >> /etc/hosts ;fi
+  if ! grep -q node04 /etc/hosts; then  sudo echo "192.168.11.125     minielk01" >> /etc/hosts ;fi
+  sudo yum -y install vim tree net-tools telnet git python3-pip sshpass
+  sudo echo "autocmd filetype yaml setlocal ai ts=2 sw=2 et" > /home/vagrant/.vimrc
+  sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+  sudo systemctl restart sshd
+  SHELL
+
+	config.vm.box = "centos/7"
+	config.vm.box_url = "centos/7"
+
+	config.vm.define "minidepkub" do |minidepkub|
+		minidepkub.vm.hostname = "minidepkub"
+		minidepkub.vm.network "private_network", ip: "192.168.11.120"
+		minidepkub.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "2" ]
+			v.customize [ "modifyvm", :id, "--memory", "4096" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "minidepkub"]
+		end
+		config.vm.provision :shell, :inline => common
+	end
+	config.vm.define "minikmaster01" do |minikmaster01|
+		minikmaster01.vm.hostname = "minikmaster01"
+		minikmaster01.vm.network "private_network", ip: "192.168.11.121"
+		minikmaster01.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "4" ]
+			v.customize [ "modifyvm", :id, "--memory", "4096" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "minikmaster01"]
+		end
+		config.vm.provision :shell, :inline => common
+	end
+	config.vm.define "miniknode01" do |miniknode01|
+		miniknode01.vm.hostname = "miniknode01"
+		miniknode01.vm.network "private_network", ip: "192.168.11.123"
+		miniknode01.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "2" ]
+			v.customize [ "modifyvm", :id, "--memory", "2048" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "miniknode01"]
+		end
+		config.vm.provision :shell, :inline => common
+	end
+	config.vm.define "miniha01" do |miniha01|
+		miniha01.vm.hostname = "miniha01"
+		miniha01.vm.network "private_network", ip: "192.168.11.124"
+		miniha01.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "1" ]
+			v.customize [ "modifyvm", :id, "--memory", "512" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "miniha01"]
+		end
+		config.vm.provision :shell, :inline => common
+	end
+	config.vm.define "minielk01" do |minielk01|
+		minielk01.vm.hostname = "minielk01"
+		minielk01.vm.network "private_network", ip: "192.168.11.125"
+		minielk01.vm.provider "virtualbox" do |v|
+			v.customize [ "modifyvm", :id, "--cpus", "2" ]
+			v.customize [ "modifyvm", :id, "--memory", "2048" ]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      			v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "minielk01"]
+		end
+		config.vm.provision :shell, :inline => common
+	end
+end
+

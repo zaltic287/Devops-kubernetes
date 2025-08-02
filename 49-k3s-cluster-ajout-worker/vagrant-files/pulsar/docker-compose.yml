@@ -1,0 +1,41 @@
+version: '3'
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: pulsar_postgres
+    environment:
+    - POSTGRES_USER=Saliou
+    - POSTGRES_PASSWORD=password
+    - POSTGRES_DB=pulsar_manager
+    ports:
+    - 5432:5432
+    volumes:
+    - ./initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+    - postgresql_data:/var/lib/postgresql/data/
+    - /home/vagrant/postgresql-schema.sql:/init.sql
+    networks:
+    - pulsar
+
+  pulsar_manager:
+    image: apachepulsar/pulsar-manager:v0.4.0
+    container_name: pulsar_manager
+    volumes:
+    - /srv/:/pulsar/data/
+    - /home/vagrant/application.properties:/pulsar-manager/pulsar-manager/application.properties
+    ports:
+    - 9527:9527
+    - 7750:7750
+    environment:
+    - SPRING_CONFIGURATION_FILE=/pulsar-manager/pulsar-manager/application.properties
+    networks:
+    - pulsar
+
+networks:
+  pulsar:
+volumes:
+  postgresql_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /srv/

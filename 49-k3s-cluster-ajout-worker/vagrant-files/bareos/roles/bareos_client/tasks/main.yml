@@ -1,0 +1,24 @@
+---
+# tasks file for bareos_client
+
+- name: Add an Apt signing key, uses whichever key is at the URL
+  apt_key:
+    url: "{{ bareos_client_packages_sources }}/Release.key"
+
+- name: add repository
+  apt_repository:
+    repo: "deb {{ bareos_client_packages_sources }}/ /"
+    state: present
+
+- name: install bareos client
+  apt: 
+    name: "{{ bareos_client_packages }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: add client to director
+  template:
+    src: client.conf.j2
+    dest: "/etc/bareos/bareos-dir.d/client/{{ ansible_hostname }}.conf"
+  delegate_to: "{{ bareos_server }}"

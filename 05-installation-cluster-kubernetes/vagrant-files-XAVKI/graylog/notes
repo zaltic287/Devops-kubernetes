@@ -1,0 +1,36 @@
+apt-get install gnupg2
+
+wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+echo "deb http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+
+#echo "deb https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+
+apt update && apt install -y mongodb-org
+
+systemctl daemon-reload && systemctl enable mongod && systemctl restart mongod
+
+
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+
+apt update && apt install elasticsearch=7.10.2
+
+sed -i s/#cluster.name.*/cluster.name: graylog/g /etc/elasticsearch/elasticsearch.yml
+#action.auto_create_index: false
+
+systemctl daemon-reload
+systemctl enable elasticsearch.service
+systemctl restart elasticsearch.service
+
+
+
+wget https://packages.graylog2.org/repo/packages/graylog-5.0-repository_latest.deb
+dpkg -i graylog-5.0-repository_latest.deb
+
+apt update && apt install -y graylog-server
+
+
+echo -n password| sha256sum
+sed -i s/password_secret.*/password_secret = passwordpasswordpassword/g /etc/graylog/server/server.conf
+sed -i s/root_password_sha2 =.*/root_password_sha2 = 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8/g /etc/graylog/server/server.conf
+sed -i s/#http_bind_address.*/http_bind_address = 0.0.0.0:9000/g /etc/graylog/server/server.conf

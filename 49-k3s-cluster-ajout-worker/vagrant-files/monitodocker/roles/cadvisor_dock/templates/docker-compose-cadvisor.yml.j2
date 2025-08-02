@@ -1,0 +1,20 @@
+version: '3'
+services:
+  cadvisor:
+    image: {{ cadvisor_dock_image }}
+    container_name: {{ cadvisor_dock_container_name }}
+    ports:
+    - 9101:8080
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:ro
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    - /dev/disk/:/dev/disk:ro
+    restart: always
+    networks:
+    - {{ cadvisor_dock_network }}
+networks:
+  {{ cadvisor_dock_network }}:
+    external:
+      name: {{ cadvisor_dock_network }}

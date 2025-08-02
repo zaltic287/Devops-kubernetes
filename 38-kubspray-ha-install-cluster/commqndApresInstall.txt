@@ -1,0 +1,47 @@
+sudo yum update -y
+echo "install ansible"
+
+
+#echo "Elevation de Privilege Pour ansible"
+
+echo "Clone de kubespray"
+git clone https://github.com/kubernetes-sigs/kubespray.git
+cd kubespray
+pip3.10 install -r requirements.txt       
+
+echo "Copie de l'inventaire"
+cp -r inventory/sample inventory/mykub
+
+echo "[all]
+kmaster01 ansible_host=192.168.7.121  ip=192.168.7.121 etcd_member_name=etcd1
+kmaster02 ansible_host=192.168.7.122  ip=192.168.7.122 etcd_member_name=etcd2
+knode01 ansible_host=192.168.7.123    ip=192.168.7.123 etcd_member_name=etcd3
+
+# ## configure a bastion host if your nodes are not directly reachable
+# bastion ansible_host=x.x.x.x ansible_user=some_user
+
+[kube-master]
+kmaster01
+kmaster02
+
+[etcd]
+kmaster01
+kmaster02
+knode01
+
+[kube-node]
+knode01
+
+[calico-rr]
+
+[k8s_cluster:children]
+kube-master
+kube-node
+calico-rr" > inventory/mykub/inventory.ini
+
+echo "apiserver_loadbalancer_domain_name: "elb.kub"
+loadbalancer_apiserver:
+  address: 192.168.7.130
+  port: 6443" > inventory/mykub/group_vars/all/all.yml
+  
+ansible-playbook -i inventory/mykub/inventory.ini -u vagrant -k -b cluster.yml

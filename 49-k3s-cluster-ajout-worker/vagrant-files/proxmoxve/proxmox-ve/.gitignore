@@ -1,0 +1,7 @@
+.vagrant/
+packer_cache/
+output-*/
+shared/
+*.box
+*.log
+.update-iso-metadata-cookie

@@ -1,0 +1,30 @@
+apiVersion: launchpad.mirantis.com/mke/v1.3
+kind: mke
+metadata:
+ name: mymke
+spec:
+  hosts:
+  - ssh:
+      address: 192.168.15.100
+      user: vagrant
+      port: 22
+      keyPath: ~/.ssh/mke
+    role: manager
+    privateInterface: enp0s8
+  - ssh:
+      address: 192.168.15.101
+      user: vagrant
+      port: 22
+      keyPath: ~/.ssh/mke
+    role: worker
+    privateInterface: enp0s8
+  mke:
+    version: 3.3.7
+    installFlags:
+      - --pod-cidr="10.0.0.0/16"
+      - --admin-username=admin
+      - --admin-password=sekretstuff
+  #mcr:
+  #  version: 19.03.14
+  cluster:
+    prune: false

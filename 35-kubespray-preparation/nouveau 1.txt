@@ -1,0 +1,10 @@
+/home/vagrant/kubespray/inventory/my-cluster/group_vars/k8s_cluster
+
+
+registry.k8s.io/cpa/cluster-proportional-autoscaler:v1.8.8-rc.1
+
+
+
+/home/vagrant/kubespray/roles/bootstrap-os/files                  version de python=3.9
+
+/usr/local/bin

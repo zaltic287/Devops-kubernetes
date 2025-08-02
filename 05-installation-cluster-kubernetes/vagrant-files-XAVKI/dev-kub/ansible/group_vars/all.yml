@@ -1,0 +1,4 @@
+kubeadm_init_master: kubm1
+kubeadm_master_group_name: k8s-masters
+kubeadm_worker_group_name: k8s-workers
+kube_api_endpoint: kublb

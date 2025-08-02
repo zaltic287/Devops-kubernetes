@@ -1,0 +1,50 @@
+---
+# tasks file for prometheus_dock
+
+- name: Remove docker-py
+  become: true
+  pip:
+    executable: pip3
+    name: docker-py
+    state: absent
+
+- name: Install docker for python
+  become: true
+  pip:
+    executable: pip3
+    name: docker
+    state: present
+    extra_args: --system
+
+- name: Create a network
+  docker_network:
+    name: "{{ prometheus_dock_network }}"
+
+- name: create prometheus directory
+  file:
+    dest: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+  - "{{ prometheus_dock_dir_configuration }}"
+  - "{{ prometheus_dock_dir_datas }}"
+
+- name: create docker-compose file
+  template:
+    src: docker-compose-prometheus.yml.j2
+    dest: "{{ prometheus_dock_dir_configuration }}/docker-compose-prometheus.yml"
+    mode: 0755
+  notify: restart_compose_prometheus
+
+- name: create prometheus configuration file
+  template:
+    src: prometheus.yml.j2
+    dest: "{{ prometheus_dock_dir_configuration }}/prometheus.yml"
+    mode: 0755
+  notify: restart_prometheus
+
+- name: run docker-compose
+  shell: "docker-compose -f {{ prometheus_dock_dir_configuration }}/docker-compose-prometheus.yml up -d"
+
+- name: force handlers if needed
+  meta: flush_handlers

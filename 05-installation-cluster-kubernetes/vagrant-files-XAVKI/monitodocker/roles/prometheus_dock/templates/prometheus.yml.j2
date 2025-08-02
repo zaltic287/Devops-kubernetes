@@ -1,0 +1,17 @@
+{{ prometheus_dock_var_config | to_nice_yaml(indent=2) }}
+{% if prometheus_dock_node_exporter_group %}
+- job_name: node_exporter
+  static_configs:
+  - targets:
+{% for srv in groups[prometheus_dock_node_exporter_group] %}
+    - {{ srv }}:9100
+{% endfor %}
+{% endif %}
+{% if prometheus_dock_cadvisor_group %}
+- job_name: cadvisor
+  static_configs:
+  - targets:
+{% for srv in groups[prometheus_dock_cadvisor_group] %}
+    - {{ srv }}:9101
+{% endfor %}
+{% endif %}

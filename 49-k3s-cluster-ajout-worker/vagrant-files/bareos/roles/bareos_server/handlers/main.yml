@@ -1,0 +1,7 @@
+---
+# handlers file for server_bareos
+
+- name: restart_bareos-dir
+  systemd:
+    name: bareos-dir
+    state: restarted

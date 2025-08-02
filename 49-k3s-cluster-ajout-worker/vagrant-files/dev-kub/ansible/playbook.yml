@@ -1,0 +1,25 @@
+- name: kubernetes
+  hosts: k8s-lb
+  become: true
+  roles:
+  - haproxy
+    
+- name: kubernetes
+  hosts: k8s-masters,k8s-workers
+  become: true
+  serial:
+  - 1
+  - 1
+  - 1
+  - "100%"
+  roles:
+  - kubernetes
+ 
+# ansible-galaxy collection install kubernetes.core
+
+- name: kubernetes
+  hosts: kubm1
+  become: true
+  roles:
+  - addons
+

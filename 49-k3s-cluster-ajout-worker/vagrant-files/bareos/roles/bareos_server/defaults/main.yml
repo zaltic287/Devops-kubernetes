@@ -1,0 +1,6 @@
+---
+# defaults file for server_bareos
+
+bareos_server_packages_sources: "http://download.bareos.org/bareos/release/latest/Debian_10"
+bareos_webui_admin_user: "admin"
+bareos_webui_admin_password: "password"

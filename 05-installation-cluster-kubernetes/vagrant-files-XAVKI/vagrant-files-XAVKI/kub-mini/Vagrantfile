@@ -1,0 +1,29 @@
+Vagrant.configure(2) do |config|
+	config.vm.define "kubemaster" do |kubmaster|
+		kubmaster.vm.box = "ubuntu/mantic64"
+		kubmaster.vm.hostname = "kubemaster"
+		kubmaster.vm.network "private_network", ip: "192.168.56.101"
+		kubmaster.vm.provider "virtualbox" do |v|
+			v.customize ["modifyvm", :id, "--cpus", "2"]
+			v.customize ["modifyvm", :id, "--memory", "2096"]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      		v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "kubemaster"]
+		end
+		config.vm.provision "docker"
+	end
+	config.vm.define "kubenode" do |kubenode|
+	    kubenode.vm.box = "ubuntu/mantic64"
+		kubenode.vm.hostname = "kubenode"
+		kubenode.vm.network "private_network", ip: "192.168.56.102"
+		kubenode.vm.provider "virtualbox" do |v|
+			v.customize ["modifyvm", :id, "--cpus", "2"]
+			v.customize ["modifyvm", :id, "--memory", "2096"]
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      		v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+			v.customize ["modifyvm", :id, "--name", "kubnode"]
+		end
+		config.vm.provision "docker"
+	end
+end
+

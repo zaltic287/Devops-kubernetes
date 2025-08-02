@@ -1,0 +1,22 @@
+all:
+  children:
+    kubernetes:
+      children:
+        k8s-lb:
+          hosts:
+            kublb:
+              ansible_host: 192.168.25.9        
+        k8s-masters:
+          hosts:
+            kubm1:
+              ansible_host: 192.168.25.10
+            kubm2:
+              ansible_host: 192.168.25.11
+            kubm3:
+              ansible_host: 192.168.25.12
+        k8s-workers: 
+          hosts:
+            kubw1:
+              ansible_host: 192.168.25.13
+            kubw2:
+              ansible_host: 192.168.25.14

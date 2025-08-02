@@ -1,0 +1,8 @@
+---
+# handlers file for prometheus_dock
+
+- name: restart_prometheus
+  shell: "docker-compose -f {{ prometheus_dock_dir_configuration }}/docker-compose-prometheus.yml restart"
+
+- name: restart_compose_prometheus
+  shell: "docker-compose -f {{ prometheus_dock_dir_configuration }}/docker-compose-prometheus.yml up -d"

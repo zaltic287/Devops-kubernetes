@@ -1,0 +1,68 @@
+---
+- name: apt update
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: install utils
+  apt:
+    name:
+      - curl
+      - wget
+      - net-tools
+      - unzip
+    state: present
+
+- name: "create node-exporter group {{ node_exporter_group }}"
+  group:
+    name: "{{ node_exporter_group }}"
+    state: present
+
+- name: "create node-exporter user {{ node_exporter_user }}"
+  user:
+    name: "{{ node_exporter_user }}"
+    shell: /sbin/nologin
+    state: present
+    group: "{{ node_exporter_group }}"
+
+- name: check if node-exporter exist
+  stat:
+    path: "{{ node_exporter_dir }}node_exporter"
+  register: __node_exporter_exist
+
+- name: download node exporter
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: /tmp/
+    remote_src: yes
+    owner: "{{ node_exporter_user }}"
+    group: "{{ node_exporter_group }}"
+  when: __node_exporter_exist.stat.exists == False
+
+- name: "move node-exporter in {{ node_exporter_dir }}"
+  shell: "mv /tmp/node_exporter-*.linux-amd64/node_exporter {{ node_exporter_dir }}"
+  when: __node_exporter_exist.stat.exists == False
+
+- name: clean node exporter archive
+  shell: "rm -rf /tmp/node_exporter-*.linux-amd64/"
+  changed_when: False
+
+- name: install systemd service for node exporter
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: 0755
+  notify: reload_systemd
+
+- name: force systemd reload if needed
+  meta: flush_handlers
+
+- name: start node exporter
+  systemd:
+    name: node_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes
+

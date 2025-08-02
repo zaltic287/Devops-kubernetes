@@ -1,0 +1,131 @@
+https://discuss.kubernetes.io/t/e-the-repository-https-apt-kubernetes-io-kubernetes-xenial-release-does-not-have-a-release-file/28121
+
+
+
+fixe DEB DEPO pour installer Kubectl kubeadm kublet   [in All Nodes]
+===================================================
+
+* Telechargement d'une clé gpg
+
+- curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+*Signature avec la clé
+
+- echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+- apt-get update
+
+
+
+Après l'installtion de Kubelet kubeadm kubectl    [in Master only]
+=============================================
+
+- sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+
+
+Problème de SSH sur les node depuis un PC local
+===============================================
+
+* rendre sur /etc/ssh/sshd_config ; 
+
+* changer laligne PasswordAuthentication no en PasswordAuthentication yes ; 
+
+* redemarrer le servic sshd : sudo systemctl restart sshd  ;
+
+- mkdir -p $HOME/.kube
+- sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+- sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+Install Calico
+==============
+
+- kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.0/manifests/tigera-operator.yaml
+
+- kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.0/manifests/custom-resources.yaml
+
+
+Si probleme de CNX sur le port 8080 avec kubectl sur le master
+=============================================================
+* executer cette commande en tant que utilisateur normal
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config 
+sudo chown (id -u):$(id -g) $HOME/.kube/config
+
+
+Si probleme de Join avec Koworker
+=================================
+
+* Ensure Kernel has modules sudo modprobe overlay
+
+- sudo modprobe br_netfilter
+- sudo modprobe overlay
+
+* Update networking to allow traffic
+
+- cat <<EOF | sudo tee /etc/sysctl.d/kubernetes.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+sudo sysctl --system
+
+
+
+Apres l'installation de docker, il faut faire ceci:
+==================================================
+
+- systemctl start docker
+- Systemctl enable docker
+
+- Systemctl start kubelet
+- Systemctl enable kubelet
+
+
+Probleme pour initialiser le cluster kubernetes ave Docker container
+====================================================================
+
+- Vim /etc/containerd/config.toml
+- remove this line : disabled_plugins = ["cri"]
+- Systemctl restart containerd.service
+
+
+docker info | grep cgroup
+
+Pour Joindre le master:
+======================
+
+kubeadm join 192.168.56.101:6443 --token tbdem9.rcmkejc610jn32bd \
+        --discovery-token-ca-cert-hash sha256:37d84b79e453fcd5db6ccf5c37e0d1805b4ad3d8dc104df7a08b84d6050df975
+
+NB: si les nodes ont la meme adresse IP, il faut éditer le fichier /etc/hosts et setter les bons adresse ip qui correspondent à celle des VMs. Sinon les nodes ne seront pas eccessible depuis l'exterieur.
+
+Faire l'autocompletion avec kubernetes
+======================================
+
+- apt-get install bash-completion
+- echo "source <(kubectl completion bash)" >> ~/.bashrc
+- source .bashrc
+
+Commande qui donnes des infos en temps reel et voir le Port exposé à l'externe
+==============================================================================
+
+- Watch kubectl get pods
+
+A l'interieur du cluster si les Pods pourront l'attaquer sur le Port exposé(ici le 8080)
+=======================================================================================
+
+- kubectl create deployment monnginx --image Nginx
+
+- kubectl create service nodeport monnginx --tcp=8080:80
+
+
+Lancer un Pod et se connecter dessus
+====================================
+
+- kubectl run myshell -ti --image busybox -- sh
+
+
+NB: les conteneurs dans un meme POD partage les meme ressources.

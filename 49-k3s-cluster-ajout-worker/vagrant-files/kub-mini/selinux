@@ -1,0 +1,1 @@
+setsebool -P haproxy_connect_any=1

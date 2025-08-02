@@ -1,0 +1,16 @@
+- name: deploy container
+  hosts: all
+  become: yes
+  tasks:
+  - name: create container
+    lxd_container:
+      name: Saliou
+      source:
+        type: image
+        mode: pull
+        server: https://images.linuxcontainers.org
+        protocol: lxd
+        #alias: ubuntu/bionic/amd64
+        alias: alpine/3.10/amd64
+      wait_for_ipv4_addresses: true
+

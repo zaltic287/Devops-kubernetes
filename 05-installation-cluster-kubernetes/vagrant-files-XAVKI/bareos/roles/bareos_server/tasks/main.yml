@@ -1,0 +1,77 @@
+---
+# tasks file for server_bareos
+
+- name: Add an Apt signing key, uses whichever key is at the URL
+  apt_key:
+    url: "{{ bareos_server_packages_sources }}/Release.key"
+
+- name: add repository
+  apt_repository:
+    repo: "deb {{ bareos_server_packages_sources }}/ /"
+    state: present
+
+- name: install bareos server
+  apt: 
+    name: 
+      - bareos
+      - bareos-database-postgresql
+      - bareos-webui
+      - postgresql
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: check if bareos db exist
+  shell : psql -tc '\l' | awk '{print $1}' | grep bareos |wc -l
+  changed_when: False
+  register: __db_bareos_exist
+  become_user: postgres
+
+- name: create bareos DB if not exist
+  shell: /usr/lib/bareos/scripts/create_bareos_database
+  become_user: postgres
+  when: __db_bareos_exist.stdout == "0"
+
+- name: check if bareos table exist
+  shell : psql -tc '\dt' -d bareos | wc -l
+  changed_when: False
+  register: __tables_bareos_exist
+  become_user: postgres
+
+- name: create bareos tables if not exist
+  shell: /usr/lib/bareos/scripts/make_bareos_tables
+  become_user: postgres
+  when: __tables_bareos_exist.stdout == "0"
+
+- name: check if bareos table exist
+  shell : psql -tc '\dp' -d bareos | grep bareos |wc -l
+  changed_when: False
+  register: __grants_bareos_exist
+  become_user: postgres
+
+- name: create bareos tables if not exist
+  shell: /usr/lib/bareos/scripts/grant_bareos_privileges
+  become_user: postgres
+  when: __grants_bareos_exist.stdout == "0"
+
+- name: start systemd services
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - bareos-dir
+  - bareos-fd
+  - bareos-sd
+  - apache2
+
+- name: set admin user and password
+  template:
+    src: webui-admin.conf.j2
+    dest: /etc/bareos/bareos-dir.d/console/admin.conf
+    owner: bareos
+    group: bareos
+    mode: 0640
+  notify: restart_bareos-dir
+
+
+    

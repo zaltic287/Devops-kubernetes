@@ -1,0 +1,34 @@
+{{ define "custom_mail_subject" }}Alert : {{ range .Alerts.Firing }}  {{ .Labels.alertname }} - {{ .Labels.instance }} {{ end }}{{ end }}
+{{ define "custom_mail_html" }}
+<html>
+<head>
+<title>Alert!</title>
+</head>
+<body>
+{{ range .Alerts.Firing }}
+
+<p>
+{{ if ne .Annotations.summary "" }}{{ .Annotations.summary }}{{ end }}
+</p>
+<p>
+{{ if ne .Annotations.description "" }}{{ .Annotations.description }}{{ end }}
+</p>
+
+<p>More details:</p>
+
+<p>
+{{ range .Annotations.SortedPairs }}
+  {{ .Name }} = {{ .Value }}<br/>
+{{ end }}
+</p>
+
+<p>
+{{ range .Labels.SortedPairs }}
+  {{ .Name }} = {{ .Value }}<br/>
+{{ end }}
+</p>
+
+{{ end }}
+
+</body></html>
+{{ end }}

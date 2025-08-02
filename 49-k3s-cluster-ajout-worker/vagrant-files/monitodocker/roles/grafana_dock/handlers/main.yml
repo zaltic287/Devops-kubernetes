@@ -1,0 +1,8 @@
+---
+# handlers file for grafana_dock
+
+- name: restart_grafana
+  shell: "docker-compose -f {{ grafana_dock_dir_configuration }}/docker-compose-grafana.yml restart"
+
+- name: restart_compose_grafana
+  shell: "docker-compose -f {{ grafana_dock_dir_configuration }}/docker-compose-grafana.yml up -d"

@@ -1,0 +1,30 @@
+version: '3'
+services:
+  grafana:
+    image: {{ grafana_dock_image }}
+    container_name: {{ grafana_dock_container_name }}
+    ports:
+    - {{ grafana_dock_expose_port }}:3000
+    volumes:
+    - grafana_data:/var/lib/grafana
+    - grafana_etc:/etc/grafana/
+    restart: always
+    networks:
+    - {{ grafana_dock_network }}
+networks:
+  {{ grafana_dock_network }}:
+    external:
+      name: {{ grafana_dock_network }}
+volumes:
+  grafana_etc:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: {{ grafana_dock_dir_configuration }}/conf
+  grafana_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: {{ grafana_dock_dir_datas }}

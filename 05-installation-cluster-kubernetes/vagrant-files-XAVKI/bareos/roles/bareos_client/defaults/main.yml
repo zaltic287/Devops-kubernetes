@@ -1,0 +1,8 @@
+---
+# defaults file for bareos_client
+
+bareos_client_packages_sources: "http://download.bareos.org/bareos/release/latest/Debian_10"
+bareos_client_packages:
+- bareos-client
+client_password: "clientpassword"
+bareos_server: "192.168.7.10"

@@ -1,0 +1,12 @@
+---
+# defaults file for grafana_dock
+
+
+grafana_dock_image: "grafana/grafana:latest"
+grafana_dock_container_name: "grafana"
+grafana_dock_dir_configuration: "/etc/grafana"
+grafana_dock_dir_datas: "/var/lib/grafana"
+grafana_dock_expose_port: 3000
+grafana_dock_admin_user: "admin"
+grafana_dock_admin_password: "password"
+grafana_dock_network: "monitoring"

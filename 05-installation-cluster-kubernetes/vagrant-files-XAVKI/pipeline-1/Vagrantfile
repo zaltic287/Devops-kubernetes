@@ -1,0 +1,133 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # jenkins server
+  config.vm.define "jenkins-pipeline" do |jenkins|
+    jenkins.vm.box = "debian/buster64"
+    jenkins.vm.hostname = "jenkins-pipeline"
+    jenkins.vm.box_url = "debian/buster64"
+    jenkins.vm.network :private_network, ip: "192.168.10.2"
+    jenkins.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 3072]
+      v.customize ["modifyvm", :id, "--name", "jenkins-pipeline"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+    jenkins.vm.provision "shell", path: "install_jenkins.sh"
+  end
+  config.vm.define "srvdev" do |srvdev|
+    srvdev.vm.box = "debian/buster64"
+    srvdev.vm.hostname = "srvdev"
+    srvdev.vm.box_url = "debian/buster64"
+    srvdev.vm.network :private_network, ip: "192.168.10.3"
+    srvdev.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "srvdev"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+  end
+  config.vm.define "srvstage" do |srvstage|
+    srvstage.vm.box = "debian/buster64"
+    srvstage.vm.hostname = "srvstage"
+    srvstage.vm.box_url = "debian/buster64"
+    srvstage.vm.network :private_network, ip: "192.168.10.7"
+    srvstage.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "srvstage"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+  end
+  config.vm.define "srvprod" do |srvprod|
+    srvprod.vm.box = "debian/buster64"
+    srvprod.vm.hostname = "srvprod"
+    srvprod.vm.box_url = "debian/buster64"
+    srvprod.vm.network :private_network, ip: "192.168.10.4"
+    srvprod.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "srvprod"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+  end
+  config.vm.define "registry" do |registry|
+    registry.vm.box = "debian/buster64"
+    registry.vm.hostname = "registry"
+    registry.vm.box_url = "debian/buster64"
+    registry.vm.network :private_network, ip: "192.168.10.5"
+    registry.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "registry"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+    registry.vm.provision "shell", path: "install_registry.sh"
+  end
+  config.vm.define "srvbdd" do |srvbdd|
+    srvbdd.vm.box = "debian/buster64"
+    srvbdd.vm.hostname = "srvbdd"
+    srvbdd.vm.box_url = "debian/buster64"
+    srvbdd.vm.network :private_network, ip: "192.168.10.6"
+    srvbdd.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "srvbdd"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+    srvbdd.vm.provision "shell", path: "install_srvbdd.sh"
+  end
+  config.vm.define "gitlab" do |gitlab|
+    gitlab.vm.box = "debian/buster64"
+    gitlab.vm.hostname = "gitlab"
+    gitlab.vm.box_url = "debian/buster64"
+    gitlab.vm.network :private_network, ip: "192.168.10.10"
+    gitlab.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 2048]
+      v.customize ["modifyvm", :id, "--name", "gitlab"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+    gitlab.vm.provision "shell", path: "install_gitlab.sh"
+  end
+end
+
+
+
+
