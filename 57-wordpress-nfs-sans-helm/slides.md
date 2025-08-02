@@ -1,5 +1,4 @@
 %title: Kubernetes 
-%Vidéos: [Formation Kubernetes](https://www.youtube.com/playlist?list=PLn6POgpklwWqfzaosSgX2XEKpse5VY2v5)
 
 # WORDPRESS : installation avec NFS (sans HELM)
 
